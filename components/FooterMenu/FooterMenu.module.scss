@@ -1,0 +1,36 @@
+@import '../SiteLayout/Variables.scss';
+
+.footermenu {
+    display: block;
+    background-color: $color1;
+    color: $color3;
+    height: auto;
+}
+.footermenu a {
+    color: #ddd;
+    text-decoration: none;
+}
+.nav {
+    display: block;
+    width: 45%;
+    margin-left: 70px;
+    padding: 2%;
+    background-color: $color1;
+}
+.nav li {
+    display: block;
+    padding: 1% 2% 1% 2%;
+    list-style: none;
+}
+.nav li:hover {
+    background-color: $color2;
+}
+
+@media (max-width: 600px) {
+    .nav {
+        width: 80%;
+    }
+    .nav li {
+        line-height: 40px;
+    }
+}

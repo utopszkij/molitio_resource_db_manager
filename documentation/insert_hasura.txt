@@ -1,0 +1,181 @@
+/*
+This is an example snippet - you should consider tailoring it
+to your service.
+*/
+
+insert
+======
+
+async function fetchGraphQL(operationsDoc, operationName, variables) {
+  const result = await fetch(
+    "undefined",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        query: operationsDoc,
+        variables: variables,
+        operationName: operationName
+      })
+    }
+  );
+
+  return await result.json();
+}
+
+const operationsDoc = `
+  mutation MyMutation {
+    insert_resource_schema_resource_communitiy(objects: {})
+  }
+`;
+
+function executeMyMutation() {
+  return fetchGraphQL(
+    operationsDoc,
+    "MyMutation",
+    {}
+  );
+}
+
+async function startExecuteMyMutation() {
+  const { errors, data } = await executeMyMutation();
+
+  if (errors) {
+    // handle those errors like a pro
+    console.error(errors);
+  }
+
+  // do something great with this precious data
+  console.log(data);
+}
+
+startExecuteMyMutation();
+
+update
+======
+
+/*
+This is an example snippet - you should consider tailoring it
+to your service.
+*/
+
+async function fetchGraphQL(operationsDoc, operationName, variables) {
+  const result = await fetch(
+    "undefined",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        query: operationsDoc,
+        variables: variables,
+        operationName: operationName
+      })
+    }
+  );
+
+  return await result.json();
+}
+
+const operationsDoc = `
+  mutation MyMutation($id: uuid = "") {
+    update_resource_schema_resource_communitiy_by_pk(pk_columns: {id: $id}, 
+    _set: {description: "desc", 
+		name: "name", 
+		status: "status", 
+		udated_at: "updated_at", 
+		updated_by: "updated_by"})
+  }
+`;
+
+function executeMyMutation(id) {
+  return fetchGraphQL(
+    operationsDoc,
+    "MyMutation",
+    {"id": id}
+  );
+}
+
+async function startExecuteMyMutation(id) {
+  const { errors, data } = await executeMyMutation(id);
+
+  if (errors) {
+    // handle those errors like a pro
+    console.error(errors);
+  }
+
+  // do something great with this precious data
+  console.log(data);
+}
+
+
+vagy
+
+const operationsDoc = `
+  mutation MyMutation($id: uuid = "", $description: String = "desc", $name: String = "name", $status: String = "status", $udated_at: date = "updated_at", $updated_by: uuid = "updated_by") {
+    update_resource_schema_resource_communitiy_by_pk(pk_columns: {id: $id}, 
+    _set: {description: $description, 
+			name: $name, 
+			status: $status, 
+			udated_at: $udated_at, 
+			updated_by: $updated_by})
+  }
+`;
+
+function executeMyMutation(id, description, name, status, udated_at, updated_by) {
+  return fetchGraphQL(
+    operationsDoc,
+    "MyMutation",
+    {"id": id, "description": description, "name": name, "status": status, "udated_at": udated_at, "updated_by": updated_by}
+  );
+}
+
+
+delete
+======
+
+/*
+This is an example snippet - you should consider tailoring it
+to your service.
+*/
+
+async function fetchGraphQL(operationsDoc, operationName, variables) {
+  const result = await fetch(
+    "undefined",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        query: operationsDoc,
+        variables: variables,
+        operationName: operationName
+      })
+    }
+  );
+
+  return await result.json();
+}
+
+const operationsDoc = `
+  mutation MyMutation($id: uuid = "") {
+    delete_resource_schema_resource_communitiy_by_pk(id: $id)
+  }
+`;
+
+function executeMyMutation(id) {
+  return fetchGraphQL(
+    operationsDoc,
+    "MyMutation",
+    {"id": id}
+  );
+}
+
+async function startExecuteMyMutation(id) {
+  const { errors, data } = await executeMyMutation(id);
+
+  if (errors) {
+    // handle those errors like a pro
+    console.error(errors);
+  }
+
+  // do something great with this precious data
+  console.log(data);
+}
+
+startExecuteMyMutation(id);

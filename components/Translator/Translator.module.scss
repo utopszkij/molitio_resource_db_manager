@@ -1,0 +1,63 @@
+.flags {
+    display: block;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 70px;
+    right: 50px;
+    z-index: 2;
+    opacity: 1;
+}
+.flags var {
+    display: inline-block;
+    height: 30px;
+    width: 50px;
+    margin: 2px;
+    cursor: pointer;
+    border-style: solid;
+    border-width: 2px;
+    border-color: silver;
+}
+.flags_hu {
+    background: linear-gradient(
+        to bottom,
+        #cd2a3e calc(100% / 3),
+        white calc(100% / 3),
+        white calc(100% / 3 * 2),
+        #436f4d calc(100% / 3 * 2)
+    );
+}
+.flags_de {
+    background: linear-gradient(
+        to bottom,
+        black calc(100% / 3),
+        #dd0000 calc(100% / 3),
+        #dd0000 calc(100% / 3 * 2),
+        #ffce00 calc(100% / 3 * 2)
+    );
+}
+.flags_en {
+    background: #00247d;
+    background-size: 50px 30px;
+    position: relative;
+}
+.flags_en:before {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    background:
+        linear-gradient(to bottom, transparent 40%, #cc142b 40%, #cc142b 60%, transparent 60%),
+        linear-gradient(to right, transparent 45%, #cc142b 45%, #cc142b 55%, transparent 55%),
+        linear-gradient(to bottom, transparent 35%, white 35%, white 65%, transparent 65%),
+        linear-gradient(to right, transparent 40%, white 40%, white 60%, transparent 60%),
+        linear-gradient(146deg, transparent 50%, #cc142b 50%, #cc142b 53%, transparent 53%) -65px 45px,
+        linear-gradient(146deg, transparent 50%, #cc142b 50%, #cc142b 53%, transparent 53%) 55px -45px,
+        linear-gradient(34deg, transparent 50%, #cc142b 50%, #cc142b 53%, transparent 53%) -75px -43px,
+        linear-gradient(34deg, transparent 50%, #cc142b 50%, #cc142b 53%, transparent 53%) 70px 46px,
+        linear-gradient(146deg, transparent 45%, white 45%, white 55%, transparent 55%),
+        linear-gradient(34deg, transparent 45%, white 45%, white 55%, transparent 55%);
+    width: 50px;
+    height: 30px;
+    background-repeat: no-repeat;
+}

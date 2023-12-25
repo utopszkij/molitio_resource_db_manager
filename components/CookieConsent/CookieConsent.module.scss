@@ -1,0 +1,16 @@
+.dialog {
+    position: fixed;
+    top: 100px;
+    left: 100px;
+    width: 80%;
+    z-index: 999;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    opacity: 1;
+}
+.btnCancel {
+    background-color: silver;
+    color: blach;
+    float: right;
+}

@@ -1,0 +1,66 @@
+@import '../SiteLayout/Variables.scss';
+
+.footer {
+    display: block;
+    background-color: $color1;
+    color: $color3;
+    height: auto;
+}
+.logoLine {
+    text-align: center;
+}
+.logo {
+    width: 60px;
+}
+.footerLine {
+    height: 10px;
+    background-color: $color2;
+    margin: 10px;
+    border-radius: 5px;
+}
+.rightBar {
+    display: block;
+    float: right;
+    width: 45%;
+    height: 300px;
+    padding: 2%;
+    background-color: $color1;
+    color: #ddd;
+}
+.leftBar {
+    display: block;
+    float: left;
+    width: 45%;
+    height: 300px;
+    padding: 2%;
+    background-color: $color1;
+    color: #ddd;
+}
+.socialLine {
+    text-align: center;
+}
+.footerSocialLinks {
+    display: inline-block;
+    background-color: white;
+    height: 60px;
+    width: 200px;
+    border-radius: 30px;
+}
+.footerSocialLinks img {
+    height: 50px;
+    margin: 5px;
+}
+.cookieButton {
+    margin: 2%;
+}
+
+@media (max-width: 600px) {
+    .rightBar {
+        display: block;
+        width: 90%;
+    }
+    .leftBar {
+        display: block;
+        width: 90%;
+    }
+}

@@ -1,0 +1,64 @@
+@import '../SiteLayout/Variables.scss';
+
+.mainmenu {
+    display: block;
+    background-color: $color1;
+    color: $color3;
+    height: 70px;
+}
+.mainmenu a {
+    color: #ddd;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+.nav {
+    display: inline-block;
+    width: 80%;
+    margin-left: 70px;
+    background-color: $color1;
+}
+.nav li {
+    display: inline-block;
+    padding: 1%;
+    list-style: none;
+}
+.nav li:hover {
+    background-color: $color2;
+}
+.toggler {
+    display: none;
+    background-color: $color2;
+    width: auto;
+    margin: 2% 2% 0 0;
+    float: right;
+}
+.logo {
+    display: block;
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+@media (max-width: 799px) {
+    .toggler {
+        display: block;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    .nav {
+        width: 300px;
+        z-index: 3;
+        margin-left: 0px;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+    }
+    .nav li {
+        display: block;
+        width: 100%;
+        line-height: 25px;
+    }
+}

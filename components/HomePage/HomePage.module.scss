@@ -1,0 +1,71 @@
+@import '../SiteLayout/Variables.scss';
+.subPage {
+    text-align:center;
+}
+.dbImg {
+    width:95%
+}
+@keyframes titleMove {
+    from {
+        top: 1200px;
+    }
+    to {
+        top: 120px;
+    }
+}
+.videoBottom {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    margin: 0px;
+    height: auto;
+    background: linear-gradient(to bottom, black, black 35%, $color1 100%);
+    color: $color2;
+    font-size: 26px;
+    text-align: center;
+}
+.videoBottomImg {
+    height: 60px;
+}
+.homeSection {
+    display: block;
+    background-color: $color1;
+    color: $color3;
+    margin: 0;
+    padding: 0;
+}
+.homeCol {
+    display: inline-block;
+    padding: 5%;
+    width: 40%;
+}
+.buttons {
+    text-align: center;
+}
+.homeButton {
+    display: inline-block;
+    padding: 6px;
+    margin: 6px;
+    background-color: $color2;
+    color: $color3;
+    border-radius: 20px;
+    width: 100px;
+    text-align: center;
+    font-size: 12px;
+}
+.homeButton a {
+    color: $color3;
+    text-decoration: none;
+}
+.homeButton:hover {
+    background-color: #779b97;
+}
+@media (max-width: 700px) {
+    .homeButton {
+        display: block;
+        width: 100%;
+    }
+    .homeCol {
+        width: 80%;
+    }
+}

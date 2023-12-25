@@ -1,0 +1,29 @@
+{
+    "title": "Süti (cookie) kezelés",
+    "body": "Mint a legtöbb webhely mi is használunk olyan \"sütiket\" (Cookie-kat) amelyek a weboldal működéséhez szükségesek. Egyéb sütiket csak az Ön hozzájárulásával használunk. Ön bármikor megadhatja, megtagadhatja vagy visszavonhatja hozzájárulását az egyes oldalak alján található \"cookie beállítások\" hivatkozás segítségével.Az \"Összes engedélyezése\" gombra kattintva hozzájárulhat az összes süti használatához, vagy részletsebben is szabályozhatja azok használatát. Ha többet szeretne megtudni arról, hogy milyen információkat gyűjtünk, és hogyan osztjuk meg azokat partnereinkkel, kérjük, olvassa el adatkezelési leírásunkat,",
+    "privacyPolicy": "Data Protection Statement",
+    "legalNotice": "Adatkezelési leírás",
+    "mySettings": "Részletes beállítás",
+    "buttonNotAgree": "Összes tiltása",
+    "buttonAgree": "Összes engedélyezése",
+    "buttonSaveSelection": "Tárolás",
+    "buttonAgreeAll": "Bejelöltek engedélyezése",
+    "categories": {
+        "necessary": {
+            "title": "Nélkülözhetetlen",
+            "description": ["Szükséges a webhely használatához"]
+        },
+        "statistics": {
+            "title": "Statisztika",
+            "description": ["Webhely látogatottság méréséhez, a web hely optimalizálás elősegítéséhez"]
+        },
+        "marketing": {
+            "title": "Hirdetések",
+            "description": ["Hírdetések, üzleti ajánlatok"]
+        },
+        "personalization": {
+            "title": "Személyre szabás",
+            "description": ["A web oldal müködésének személyre szabása"]
+        }
+    }
+}

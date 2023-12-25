@@ -1,0 +1,17 @@
+@import '../SiteLayout/Variables.scss';
+.subPage {
+    text-align:center;
+}
+.dbImg {
+    width:95%
+}
+.deleteForm {margin:30px; padding:10px; 
+    border-style:solid; border-color:red; border-width:2px;}
+.invalid {border-color: red} 
+.valid {border-color: green;} 
+.brTable {width:90%; margin:4%}
+.brTable td {text-align:left; border-style:solid; border-width:1px;}
+.brTable button {font-size:20px; padding:5px; width:30px}
+.th {cursor:pointer; border-style:solid; border-width:1; background-color:black; color:white}  
+.show a {text-decoration: none}
+.parentLink {color:white}

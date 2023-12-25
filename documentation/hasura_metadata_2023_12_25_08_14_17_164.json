@@ -1,0 +1,497 @@
+{
+  "resource_version": 151,
+  "metadata": {
+    "version": 3,
+    "sources": [
+      {
+        "name": "docker_psql",
+        "kind": "postgres",
+        "tables": [
+          {
+            "table": {
+              "name": "private_resource_community",
+              "schema": "private_user_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "userPublicByCreatedBy",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              },
+              {
+                "name": "userPublicByUserPublicId",
+                "using": {
+                  "foreign_key_constraint_on": "user_public_id"
+                }
+              },
+              {
+                "name": "user_public",
+                "using": {
+                  "foreign_key_constraint_on": "id"
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "user_identity",
+              "schema": "private_user_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "userPublicByCreatedBy",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              },
+              {
+                "name": "userPublicByUpdatedBy",
+                "using": {
+                  "foreign_key_constraint_on": "updated_by"
+                }
+              },
+              {
+                "name": "user_public",
+                "using": {
+                  "foreign_key_constraint_on": "id"
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "public_resource_community",
+              "schema": "public_user_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "userPublicByUpdatedBy",
+                "using": {
+                  "foreign_key_constraint_on": "updated_by"
+                }
+              },
+              {
+                "name": "userPublicByUserPublicId",
+                "using": {
+                  "foreign_key_constraint_on": "user_public_id"
+                }
+              },
+              {
+                "name": "user_public",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "user_persisted_config",
+              "schema": "public_user_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "userPublicById",
+                "using": {
+                  "foreign_key_constraint_on": "id"
+                }
+              },
+              {
+                "name": "user_public",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "user_public",
+              "schema": "public_user_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "private_resource_community",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "id",
+                    "table": {
+                      "name": "private_resource_community",
+                      "schema": "private_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "user_identity",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "id",
+                    "table": {
+                      "name": "user_identity",
+                      "schema": "private_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "user_persisted_config",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "id",
+                    "table": {
+                      "name": "user_persisted_config",
+                      "schema": "public_user_schema"
+                    }
+                  }
+                }
+              }
+            ],
+            "array_relationships": [
+              {
+                "name": "privateResourceCommunitiesByUserPublicId",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "user_public_id",
+                    "table": {
+                      "name": "private_resource_community",
+                      "schema": "private_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "private_resource_communities",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "created_by",
+                    "table": {
+                      "name": "private_resource_community",
+                      "schema": "private_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "publicResourceCommunitiesByUpdatedBy",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "updated_by",
+                    "table": {
+                      "name": "public_resource_community",
+                      "schema": "public_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "publicResourceCommunitiesByUserPublicId",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "user_public_id",
+                    "table": {
+                      "name": "public_resource_community",
+                      "schema": "public_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "public_resource_communities",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "created_by",
+                    "table": {
+                      "name": "public_resource_community",
+                      "schema": "public_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "userIdentitiesByUpdatedBy",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "updated_by",
+                    "table": {
+                      "name": "user_identity",
+                      "schema": "private_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "user_identities",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "created_by",
+                    "table": {
+                      "name": "user_identity",
+                      "schema": "private_user_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "user_persisted_configs",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "created_by",
+                    "table": {
+                      "name": "user_persisted_config",
+                      "schema": "public_user_schema"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "resource",
+              "schema": "resource_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "resource_collection",
+                "using": {
+                  "foreign_key_constraint_on": "resource_collection_id"
+                }
+              },
+              {
+                "name": "user_creator",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              },
+              {
+                "name": "user_modifier",
+                "using": {
+                  "foreign_key_constraint_on": "updated_by"
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "resource_collection",
+              "schema": "resource_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "resource_community",
+                "using": {
+                  "foreign_key_constraint_on": "resource_community_id"
+                }
+              },
+              {
+                "name": "user_creator",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              },
+              {
+                "name": "user_modifier",
+                "using": {
+                  "foreign_key_constraint_on": "updated_by"
+                }
+              }
+            ],
+            "array_relationships": [
+              {
+                "name": "resources",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "resource_collection_id",
+                    "table": {
+                      "name": "resource",
+                      "schema": "resource_schema"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "resource_community",
+              "schema": "resource_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "user_creator",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              },
+              {
+                "name": "user_modifier",
+                "using": {
+                  "foreign_key_constraint_on": "updated_by"
+                }
+              }
+            ],
+            "array_relationships": [
+              {
+                "name": "resource_collections",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "resource_community_id",
+                    "table": {
+                      "name": "resource_collection",
+                      "schema": "resource_schema"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "resource_label_type",
+              "schema": "resource_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "user_creator",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              },
+              {
+                "name": "user_modifier",
+                "using": {
+                  "foreign_key_constraint_on": "updated_by"
+                }
+              }
+            ],
+            "array_relationships": [
+              {
+                "name": "table_labels",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "resource_label_type_id",
+                    "table": {
+                      "name": "table_label",
+                      "schema": "resource_schema"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "table_label",
+              "schema": "resource_schema"
+            },
+            "object_relationships": [
+              {
+                "name": "parent_community",
+                "using": {
+                  "manual_configuration": {
+                    "column_mapping": {
+                      "parent_id": "id"
+                    },
+                    "insertion_order": null,
+                    "remote_table": {
+                      "name": "resource_label_type",
+                      "schema": "resource_schema"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "resource_label_type",
+                "using": {
+                  "foreign_key_constraint_on": "resource_label_type_id"
+                }
+              },
+              {
+                "name": "user_creator",
+                "using": {
+                  "foreign_key_constraint_on": "created_by"
+                }
+              },
+              {
+                "name": "user_modifier",
+                "using": {
+                  "foreign_key_constraint_on": "updated_by"
+                }
+              }
+            ],
+            "insert_permissions": [
+              {
+                "role": "query_root",
+                "permission": {
+                  "check": {},
+                  "columns": [
+                    "parent_table",
+                    "value",
+                    "created_at",
+                    "updated_at",
+                    "created_by",
+                    "id",
+                    "parent_id",
+                    "resource_label_type_id",
+                    "updated_by"
+                  ]
+                },
+                "comment": ""
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "query_root",
+                "permission": {
+                  "columns": [
+                    "parent_table",
+                    "value",
+                    "created_at",
+                    "updated_at",
+                    "created_by",
+                    "id",
+                    "parent_id",
+                    "resource_label_type_id",
+                    "updated_by"
+                  ],
+                  "filter": {}
+                },
+                "comment": ""
+              }
+            ]
+          }
+        ],
+        "configuration": {
+          "connection_info": {
+            "database_url": {
+              "from_env": "PG_DATABASE_URL"
+            },
+            "isolation_level": "read-committed",
+            "use_prepared_statements": false
+          }
+        }
+      }
+    ],
+    "backend_configs": {
+      "dataconnector": {
+        "athena": {
+          "uri": "http://data-connector-agent:8081/api/v1/athena"
+        },
+        "mariadb": {
+          "uri": "http://data-connector-agent:8081/api/v1/mariadb"
+        },
+        "mysql8": {
+          "uri": "http://data-connector-agent:8081/api/v1/mysql"
+        },
+        "oracle": {
+          "uri": "http://data-connector-agent:8081/api/v1/oracle"
+        },
+        "snowflake": {
+          "uri": "http://data-connector-agent:8081/api/v1/snowflake"
+        }
+      }
+    }
+  }
+}

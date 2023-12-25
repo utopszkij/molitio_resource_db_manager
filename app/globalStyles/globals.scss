@@ -1,0 +1,560 @@
+@import '../../components/SiteLayout/Variables.scss';
+
+.btn {font-size:18px; padding:5px;} 
+.form {text-align:left; padding:10px;}
+.formControl {display:block}
+.form input,
+.form textarea  {padding:5px; border-radius:5px; margin:5px; max-width:75%}
+.form label {display:inline-block; width:250px; text-align:right}
+.form textarea {width: 50%; height: 200px}
+.formButtons {text-align:center}
+.formButtons button {padding:5px; border-radius:5px;}
+.errorMsg {background-color:red; color:white; padding:10px; 
+    position:fixed; top:100px; left:50px; width:50%; height:auto; z-index:10}
+.successMsg {background-color:#7fc97d; color:black; padding:10px; 
+        position:fixed; top:100px; left:50px; width:50%; height:auto; z-index:10}
+    .msgCloseBtn {text-align:right}
+.paginator button {font-size:18px; padding:5px; margin:10px; width:30px}
+
+.alert_danger {
+    background-color: red;
+    color: white;
+    padding: 10px;
+}
+.alert_success {
+    background-color: #a8e8a0;
+    color: black;
+    padding: 10px;
+}
+.alert_info {
+    background-color: orange;
+    color: black;
+    padding: 10px;
+}
+
+.btn_danger {
+    background-color: #f28b80;
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+}
+.btn_ok {
+    background-color: #a8e8a0;
+    color: black;
+    padding: 5px;
+    border-radius: 10px;
+}
+.btn_primary {
+    background-color: $color2;
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+}
+.btn_secondary {
+    background-color: silver;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+// 12 oszlopos rács model
+// col_x : minden eszközön x oszlop széles
+// col_dx_py : desctopon x oszlop, telon y oszlop széles (y -ban csak páros számok)
+// col_d0_py desctopon nem jelenik meg
+// col_dx_p0 telon nem jelenik meg
+
+.row {
+    display: block;
+    width: 100%;
+}
+.col_12 {
+    display: inline-block;
+    width: 100%;
+}
+.col_11 {
+    display: inline-block;
+    width: 88%;
+}
+.col_10 {
+    display: inline-block;
+    width: 80%;
+}
+.col_9 {
+    display: inline-block;
+    width: 72%;
+}
+.col_8 {
+    display: inline-block;
+    width: 64%;
+}
+.col_7 {
+    display: inline-block;
+    width: 58%;
+}
+.col_6 {
+    display: inline-block;
+    width: 50%;
+}
+.col_5 {
+    display: inline-block;
+    width: 40%;
+}
+.col_4 {
+    display: inline-block;
+    width: 32%;
+}
+.col_3 {
+    display: inline-block;
+    width: 24%;
+}
+.col_2 {
+    display: inline-block;
+    width: 16%;
+}
+.col_1 {
+    display: inline-block;
+    width: 8%;
+}
+
+.col_12_p0 {
+    display: inline-block;
+    width: 100%;
+}
+.col_11_p0 {
+    display: inline-block;
+    width: 88%;
+}
+.col_10_p0 {
+    display: inline-block;
+    width: 80%;
+}
+.col_9_p0 {
+    display: inline-block;
+    width: 72%;
+}
+.col_8_p0 {
+    display: inline-block;
+    width: 64%;
+}
+.col_7_p0 {
+    display: inline-block;
+    width: 58%;
+}
+.col_6_p0 {
+    display: inline-block;
+    width: 50%;
+}
+.col_5_p0 {
+    display: inline-block;
+    width: 40%;
+}
+.col_4_p0 {
+    display: inline-block;
+    width: 32%;
+}
+.col_3_p0 {
+    display: inline-block;
+    width: 24%;
+}
+.col_2_p0 {
+    display: inline-block;
+    width: 16%;
+}
+.col_1_p0 {
+    display: inline-block;
+    width: 8%;
+}
+
+.col_d0_p12 {
+    display: none;
+}
+.col_d0_p_11 {
+    display: none;
+}
+.col_d0_p_10 {
+    display: none;
+}
+.col_d0_p_9 {
+    display: none;
+}
+.col_d0_p_8 {
+    display: none;
+}
+.col_d0_p_7 {
+    display: none;
+}
+.col_d0_p_6 {
+    display: none;
+}
+.col_d0_p_5 {
+    display: none;
+}
+.col_d0_p_4 {
+    display: none;
+}
+.col_d0_p_3 {
+    display: none;
+}
+.col_d0_p_2 {
+    display: none;
+}
+.col_d0_p_1 {
+    display: none;
+}
+
+.col_d11_p12 {
+    display: inline-block;
+    width: 88%;
+}
+.col_d10_p12 {
+    display: inline-block;
+    width: 80%;
+}
+.col_d9_p12 {
+    display: inline-block;
+    width: 72%;
+}
+.col_d8_p12 {
+    display: inline-block;
+    width: 64%;
+}
+.col_d7_p12 {
+    display: inline-block;
+    width: 58%;
+}
+.col_d6_p12 {
+    display: inline-block;
+    width: 50%;
+}
+.col_d5_p12 {
+    display: inline-block;
+    width: 40%;
+}
+.col_d4_p12 {
+    display: inline-block;
+    width: 32%;
+}
+.col_d3_p12 {
+    display: inline-block;
+    width: 24%;
+}
+.col_d2_p12 {
+    display: inline-block;
+    width: 16%;
+}
+.col_d1_p12 {
+    display: inline-block;
+    width: 8%;
+}
+
+.col_d9_p10 {
+    display: inline-block;
+    width: 72%;
+}
+.col_d8_p10 {
+    display: inline-block;
+    width: 64%;
+}
+.col_d7_p10 {
+    display: inline-block;
+    width: 58%;
+}
+.col_d6_p10 {
+    display: inline-block;
+    width: 50%;
+}
+.col_d5_p10 {
+    display: inline-block;
+    width: 40%;
+}
+.col_d4_p10 {
+    display: inline-block;
+    width: 32%;
+}
+.col_d3_p10 {
+    display: inline-block;
+    width: 24%;
+}
+.col_d2_p10 {
+    display: inline-block;
+    width: 16%;
+}
+.col_d1_p10 {
+    display: inline-block;
+    width: 8%;
+}
+
+.col_d6_p8 {
+    display: inline-block;
+    width: 50%;
+}
+.col_d5_p8 {
+    display: inline-block;
+    width: 40%;
+}
+.col_d4_p8 {
+    display: inline-block;
+    width: 32%;
+}
+.col_d3_p8 {
+    display: inline-block;
+    width: 24%;
+}
+.col_d2_p8 {
+    display: inline-block;
+    width: 16%;
+}
+.col_d1_p8 {
+    display: inline-block;
+    width: 8%;
+}
+
+.col_d3_p4 {
+    display: inline-block;
+    width: 24%;
+}
+.col_d2_p4 {
+    display: inline-block;
+    width: 16%;
+}
+.col_d1_p4 {
+    display: inline-block;
+    width: 8%;
+}
+
+.col_d1_p2 {
+    display: inline-block;
+    width: 8%;
+}
+
+@media (max-width: 799px) {
+    .col_d12_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d11_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d10_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d9_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d8_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d7_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d6_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d5_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d4_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d3_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d2_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d1_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .col_d9_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d8_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d7_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d6_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d5_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d4_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d3_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d2_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d1_p10 {
+        display: inline-block;
+        width: 80%;
+    }
+
+    .col_d6_p8 {
+        display: inline-block;
+        width: 64%;
+    }
+    .col_d5_p8 {
+        display: inline-block;
+        width: 64%;
+    }
+    .col_d4_p8 {
+        display: inline-block;
+        width: 64%;
+    }
+    .col_d3_p8 {
+        display: inline-block;
+        width: 64%;
+    }
+    .col_d2_p8 {
+        display: inline-block;
+        width: 64%;
+    }
+    .col_d1_p8 {
+        display: inline-block;
+        width: 64%;
+    }
+
+    .col_d3_p4 {
+        display: inline-block;
+        width: 32%;
+    }
+    .col_d2_p4 {
+        display: inline-block;
+        width: 32%;
+    }
+    .col_d1_p4 {
+        display: inline-block;
+        width: 32%;
+    }
+
+    .col_d1_p2 {
+        display: inline-block;
+        width: 16%;
+    }
+
+    .col_12_p0 {
+        display: none;
+    }
+    .col_11_p0 {
+        display: none;
+    }
+    .col_10_p0 {
+        display: none;
+    }
+    .col_9_p0 {
+        display: none;
+    }
+    .col_8_p0 {
+        display: none;
+    }
+    .col_7_p0 {
+        display: none;
+    }
+    .col_6_p0 {
+        display: none;
+    }
+    .col_5_p0 {
+        display: none;
+    }
+    .col_4_p0 {
+        display: none;
+    }
+    .col_3_p0 {
+        display: none;
+    }
+    .col_2_p0 {
+        display: none;
+    }
+    .col_1_p0 {
+        display: none;
+    }
+
+    .col_d0_p12 {
+        display: inline-block;
+        width: 100%;
+    }
+    .col_d0_p_11 {
+        display: inline-block;
+        width: 88%;
+    }
+    .col_d0_p_10 {
+        display: inline-block;
+        width: 80%;
+    }
+    .col_d0_p_9 {
+        display: inline-block;
+        width: 72%;
+    }
+    .col_d0_p_8 {
+        display: inline-block;
+        width: 64%;
+    }
+    .col_d0_p_7 {
+        display: inline-block;
+        width: 58%;
+    }
+    .col_d0_p_6 {
+        display: inline-block;
+        width: 50%;
+    }
+    .col_d0_p_5 {
+        display: inline-block;
+        width: 40%;
+    }
+    .col_d0_p_4 {
+        display: inline-block;
+        width: 32%;
+    }
+    .col_d0_p_3 {
+        display: inline-block;
+        width: 24%;
+    }
+    .col_d0_p_2 {
+        display: inline-block;
+        width: 16%;
+    }
+    .col_d0_p_1 {
+        display: inline-block;
+        width: 8%;
+    }
+
+    .form label {display:block; text-align:left; width:auto}
+    .form input {max-width:95%}
+    .form textarea {max-width:95%}
+    .brHeader th {display:block; text-align:left; margin:10px;}
+    .brBody tr {display:block; border-style:solid; border-width:1px; margin:2px 10px 2px 2px}
+    .brBody td  {display:block;  margin:5px; border-style:none; border-color:transparent}
+    .brBody button {margin:2px 10px 2px 2px}
+    .loader {position:fixed; z-index:10; top:200px; 
+        display:block; width:100%; text-align:center }
+    .loader img {width:60px}    
+}
