@@ -3,15 +3,6 @@ import { Provider } from "react-redux";
 import { appStore } from "../context/store";
 import About from '../components/AboutPage/AboutPage';
 
-/*
-install:
-
-lásd:
-https://github.com/vercel/next.js/tree/canary/examples/with-jest
-
-
-*/
-
     test('abaut page test', () => {
         const { container } = render(<Provider store={appStore}><About /></Provider>);
         // container.querySelectorAll, .querySelector, .innerHTML, .className ... hasznlható;

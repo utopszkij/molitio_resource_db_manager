@@ -18,27 +18,16 @@ import { Cookies } from '../CookieConsent';
 import { selectCookieConsentData } from '../../context/store';
 import { CookieConsentData } from '../../context/types';
 // user regist/login system
-import { AuthenticatedUser } from '../../context/types';        
-// database interface
-import { insert, update, getRecords, getTotal, getRecord, 
-    remove, removeRecords, preprocessor} from '../../objects/DatabaseInterface';
-// form manager support
+import { AuthenticatedUser } from '../../context/types';    
+// browser    
 import { BrowserInfo, fm } from '../../objects/FormManager';
 // paginator support
 import { Paginator } from '../../objects/Paginator';
-/**
- * Community record
- */
-export type CommunityRecord = {
-    id: string,
-    name: string,
-    description: string,
-    status: string,
-    created_by: string,
-    created_at: string,
-    updated_by: string,
-    updated_at: string,
-}
+// controller
+import { CommunityController, FormData } from './CommunitiesController';
+import { Record } from './CommunitiesModel';
+
+const ctrl = new CommunityController();
 
 /**
 * resources community manager REACT component
@@ -46,13 +35,14 @@ export type CommunityRecord = {
 * Therefore, it cannot be defined in the siteLayout parameter!
 */
 const _Communities = ( params: any ): React.JSX.Element => {
-    // general data
+    
+    // top level codes runs after each formData modification !!!
+    
     const browserName = 'communities';
     const dispatch = useAppDispatch();
-    const [compStatus, setCompStatus] = useState(''); // 'browser'|'show'|'edit'|'delete'|'none'
     let id = params.id;
 
-    let record:CommunityRecord = {
+    let record:Record = {
         id: '',
         name: '',    
         description: '',
@@ -65,7 +55,7 @@ const _Communities = ( params: any ): React.JSX.Element => {
 
     // test user data, must overwrite it!
     let user:AuthenticatedUser = fm.testUser;
-
+    
     // translator data
     const translatorData = useAppSelector(selectTranslatorData);
     Translator.translatorData = translatorData;
@@ -75,11 +65,12 @@ const _Communities = ( params: any ): React.JSX.Element => {
 
     // browser datas
     let browserInfo:BrowserInfo = fm.getBrowserInfo(browserName);
-  
+
     /**
      *  data for form 
      */ 
     const [formData, setFormData] = React.useState({
+        compStatus: '',
         // messages
         errorMsg: '',
         successMsg: '',
@@ -105,19 +96,62 @@ const _Communities = ( params: any ): React.JSX.Element => {
         items: [],
         pages:[]
     })
-
     /**
      * set one filed in formData
      * @param fname mező neve
      * @param value érték
      */
     const setFormDataField = (fname: string, value: any):void => {
-        setFormData((prevState) => ({
-            ...prevState,
-            [fname]: value,
-        }));
+            setFormData((prevState) => ({
+                ...prevState,
+                [fname]: value,
+            }));
     }
-    fm.init(setFormDataField); // setup formManager
+
+    const getFormData = ():FormData => {
+        return formData;
+    }
+
+    // refresh ctrl.getFormData where change formData
+    ctrl.getFormData = getFormData;
+
+    /**
+     * form onload function
+     */
+    var runOnLoad = true;
+    useEffect(() => {
+        if (runOnLoad) {
+            fm.init(setFormDataField); // setup formManager
+            // ENTER keup --> default button action
+            document.addEventListener("keyup", keyUpHandler);
+            // load dictionaries
+            Translator.loadDictionaries('', dispatch);
+            // load browser info from cookie
+            ctrl.browserInfo = fm.getBrowserInfo(ctrl.browserName);
+            // onload functions
+            ctrl.onLoad(id,setFormDataField, getFormData);
+            runOnLoad = false;
+        }    
+    }, []);
+
+    /**
+     * order up/down icon into browser table header
+     * @param name 
+     * @param order 
+     * @return string 
+     */
+    const thIcon = (name:string, order:string) => {
+        let result = '';
+        if (order == name+': asc') {
+            result = '&#9660; ';  
+        }
+        if (order == name+': desc') {
+            result = '&#9650; ';  
+        }
+        return result;
+    }
+
+    // ======================== event handlers ===================================
     
     /**
      * errorMsg or successmsg close btn click event handler
@@ -127,185 +161,10 @@ const _Communities = ( params: any ): React.JSX.Element => {
     }
 
     /**
-     * send click event handler
-     */
-    const saveClick = () => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        const errorMsg = validator();
-        if (errorMsg != '') {
-            setCompStatus('edit');
-            fm.setErrorMsg(errorMsg);
-        } else {
-            if (formData.id == '') {
-                let record = {
-                    name : formData.name,
-                    description : formData.description,
-                    status : formData.status,
-                    created_at : fm.getCurrentDate(),
-                    created_by : user.id,
-                } 
-                insert('resource_schema','resource_community', record)
-                .then((res) => {
-                    res = preprocessor(res);
-                    if (res.error != undefined) {
-                        fm.setErrorMsg(res.error);
-                    } else {
-                        fm.setSuccessMsg(t('SAVED'));
-                        window?.setTimeout(fm.clearMsgs,2000);
-                        getItems('browser');
-                    }
-                })
-            } else {
-                let record = {
-                    id: formData.id,
-                    name : formData.name,
-                    description : formData.description,
-                    status : formData.status,
-                    created_at : formData.created_at,
-                    created_by : formData.created_by,
-                    updated_at : fm.getCurrentDate(),
-                    updated_by : user.id,
-                } 
-                update('resource_schema','resource_community',record.id, record)
-                .then((res) => {
-                    res = preprocessor(res);
-                    if (res.error != undefined) {
-                        fm.setErrorMsg(res.error);
-                    } else {
-                        fm.setSuccessMsg(t('SAVED'));
-                        window?.setTimeout(fm.clearMsgs,2000);
-                        getItems('browser');
-                    }
-                })
-            }
-        }
-    }
-
-    /**
      * cancel click event handler
      */
     const cancelClick = () => {
-        window?.scrollTo(0,0);
-        fm.clearMsgs();
-        getItems('browser');
-    }
-
-    /**
-     * form data validator
-     * @returns string
-     */
-    const validator = (): string => {
-        fm.clearMsgs();
-        let result = '';
-        if (formData.name == '') {
-            result += t('NAME_REQUIRED')+'<br />';
-            fm.validMarker('name',false);
-        } else {
-            fm.validMarker('name',true);
-        }
-        if (formData.description == '') {
-            result += t('DESCRIPTION_REQUIRED')+'<br />';
-            fm.validMarker('description',false);
-        } else {
-            fm.validMarker('description',true);
-        }
-        if (formData.status == '') {
-            result += t('STATUS_REQUIRED')+'<br />';
-            fm.validMarker('status',false);
-        } else {
-            fm.validMarker('status',true);
-        }
-        return result
-    }
-
-    /**
-     * get items from database, use browserInfo, save into formData
-     * use browserInfo, call getTotal
-     */
-    const getItems = (newStatus: string, newOffset?:number) => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        if (newOffset != undefined) {
-            if (newOffset < 0) newOffset = 0;
-            if (newOffset >= formData.total) newOffset = 0;
-            browserInfo.offset = newOffset;
-            setFormDataField('offset',newOffset);
-        }
-        getRecords('resource_schema', 'resource_community',
-            ['id','name','description','status','created_at',
-              'user_creator.username_public', 'user_modifier.username_public' ], 
-            [browserInfo.order], 
-            browserInfo.filter,
-            browserInfo.offset,
-            browserInfo.limit
-        ).then( (res) => { 
-            res = preprocessor(res);
-            if (res.error != undefined) {
-                fm.setErrorMsg(res.error);
-            } else {
-                setFormDataField('items',res);
-                setFormDataField('order',browserInfo.order);
-                setFormDataField('offset',browserInfo.offset);
-                fm.saveBrowserInfo(browserInfo);
-                getTotalCount(newStatus);
-            }   
-        })        
-
-    }
-
-    /**
-     * get total record count from database
-     * @param newStatus 
-     */
-    const getTotalCount = (newStatus: string) => {
-        getTotal('resource_schema', 'resource_community',
-            browserInfo.filter
-        ).then( (res) => { 
-            res = preprocessor(res);
-            if (res.error != undefined) {
-                fm.setErrorMsg(res.error);
-            } else {
-                setFormDataField('pages',Paginator.buildPages(res.count, browserInfo.limit));
-                setFormDataField('total',res.count);
-                setCompStatus(newStatus);
-            }   
-        })        
-    }
-
-    /**
-     * get one record form database by id
-     * @param id 
-     * @param newStatus 
-     */
-    const getOneRecord = (id: string, newStatus: string) => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        getRecord('resource_schema', 'resource_community',
-            ['id','name','description','status','created_at','created_by',
-              'updated_at','updated_by',  
-              'user_creator.username_public', 'user_modifier.username_public' ], 
-            id  
-        ).then( (res) => { 
-            res = preprocessor(res);
-            if (res.error != undefined) {
-                fm.setErrorMsg(res.error);
-            } else {
-                if (res.length > 0) {
-                    setFormDataField('id',res[0].id);
-                    setFormDataField('name',res[0].name);
-                    setFormDataField('description',res[0].description);
-                    setFormDataField('status',res[0].status);
-                    setFormDataField('created_at',res[0].created_at);
-                    setFormDataField('updated_at',res[0].updated_at);
-                    setFormDataField('created_by',res[0].created_by);
-                    setFormDataField('updated_by',res[0].updated_by);
-                    setFormDataField('creatorName',res[0].user_creator.username_public);
-                    setFormDataField('updaterName',res[0].user_modifier?.username_public);
-                }    
-                setCompStatus(newStatus);
-            }   
-        })        
+        ctrl.browser();
     }
 
     /**
@@ -313,77 +172,18 @@ const _Communities = ( params: any ): React.JSX.Element => {
      * @param id 
      */
     const showClick = (id: string) => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        fm.saveBrowserInfo(browserInfo);
-        getOneRecord(id, 'show');
-    }  
+        ctrl.show(id);
+    }    
 
     /**
      * new button click event handler
      */
     const newClick = () => {
-        window?.scrollTo(0,0);
-        fm.saveBrowserInfo(browserInfo);
-        document.getElementById('name')?.setAttribute('class','');
-        document.getElementById('description')?.setAttribute('class','');
-        document.getElementById('status')?.setAttribute('class','');
-        fm.clearMsgs();
-
-        // formData init 
-        setFormDataField('id','');
-        setFormDataField('name','');
-        setFormDataField('description','');
-        setFormDataField('status','');
-        setFormDataField('created_at',fm.getCurrentDate());
-        setFormDataField('created_by',user.id);
-        setFormDataField('creatorName',user.nick);
-        // display edit form
-        setCompStatus('edit');
-        window.setTimeout("document.getElementById('name')?.focus()",1000);
+        ctrl.new();
     }
 
-    /**
-     * doDelete button click event handler
-     * @param id 
-     */
-    const doDelete = (id: string) => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        remove('resource_schema','resource_community', id)
-        .then( (res) => {
-            res = preprocessor(res);
-            console.log(res);
-            if (res.error != undefined) {
-                fm.setErrorMsg(res.error);
-            } else { 
-                removeRecords('resource_schema','resource_collection',
-                    [{operator:'',
-                    relation:{
-                        field:'resource_community_id',
-                        relType:'eq',
-                        value:id
-                    }
-                    }]);
-                removeRecords('resource_schema','table_label',
-                    [{operator:'',
-                    relation:{
-                        field:'parent_id',
-                        relType:'eq',
-                        value:id
-                    }},
-                    {operator:'and',
-                    relation:{
-                        field:'parent_table',
-                        relType:'eq',
-                        value:'resorce_community'
-                    }},                  
-                    ]);
-                fm.setSuccessMsg( t('DELETED') );
-                window?.setTimeout(fm.clearMsgs,2000);
-                getItems('browser');
-            }    
-        })
+    const saveClick = () => {
+        ctrl.save()
     }
 
     /**
@@ -408,46 +208,11 @@ const _Communities = ( params: any ): React.JSX.Element => {
 
     /**
      * paginator button click event handler
-     * @param e 
+     * @param e Event   target.id is paginatorType 
      */
     const paginatorClick = (e:any) => {
-        // e.target.id alapján kell müködnie
-        // total, offset, limit használatával új offset -et határoz meg és
-        // items-et olvas az adatbázisból
         const id = e.target.id;
-        let newOffset = formData.offset;
-        if (id == 'paginatorFirst') newOffset = 0;
-        if (id == 'paginatorPrev') newOffset = formData.offset - browserInfo.limit;
-        if (id == 'paginatorNext') newOffset = formData.offset + browserInfo.limit;
-        if (id == 'paginatorLast') {
-            while (newOffset < formData.total ) {
-                newOffset = newOffset + browserInfo.limit;
-            }
-            if (newOffset > formData.total) {
-                newOffset = newOffset - browserInfo.limit;
-            }    
-        } 
-        if (newOffset < 0) newOffset = 0;
-        if (newOffset >= formData.total) newOffset = newOffset - browserInfo.limit;
-        browserInfo.offset = newOffset;
-        getItems('browser');
-    }
-
-    /**
-     * order up/down icon into browser table header
-     * @param name 
-     * @param order 
-     * @return string 
-     */
-    const thIcon = (name:string, order:string) => {
-            let result = '';
-            if (order == name+': asc') {
-                result = '&#9660; ';  
-            }
-            if (order == name+': desc') {
-                result = '&#9650; ';  
-            }
-            return result;
+        ctrl.doPaginator(id);
     }
 
     /**
@@ -455,108 +220,23 @@ const _Communities = ( params: any ): React.JSX.Element => {
      * @param e 
     */
     const thClick = (e:any) => {
-            if (formData.offset != browserInfo.offset ) browserInfo.offset = formData.offset;
-            let newOrder = formData.order;
-            const name = e.target.id.substring(2,100);
-            if (formData.order == name+': asc') {
-                newOrder = name+': desc';
-            } else {
-                newOrder = name+': asc';
-            }
-            browserInfo.order = newOrder;
-            getItems('browser');
-    }
+        const name = e.target.id.substring(2,100);
+        ctrl.reOrder(name);
+    }    
 
     /**
      * user click formFilter "start" event handler
     */
     const doFilter = () => {
-            setFormDataField('offset',0);
-            browserInfo.offset = 0;
-            let operation = '';
-            browserInfo.filter = [];
-            if (formData.filterName != '') {
-                browserInfo.filter.push({
-                    operation:operation,
-                    relation:{field:'name', relType:'eq', value:formData.filterName}
-                });
-                operation = 'and';
-            }    
-            if (formData.filterStatus != '') {
-                browserInfo.filter.push({
-                    operation:operation,
-                    relation:{field:'status', relType:'eq', value:formData.filterStatus}
-                });
-                operation = 'and';
-            }    
-            if (formData.filterDescription != '') {
-                browserInfo.filter.push({
-                    operation:operation,
-                    relation:{field:'description', relType:'like', value:'%'+formData.filterDescription+'%'}
-                });
-                operation = 'and';
-            }    
-            getItems('browser');
-            return false;
+        ctrl.doFilter();
     }
 
     /**
      * user click "del filter" event handler
      */
     const delFilter = () => {
-            setFormDataField('filterName','');
-            setFormDataField('filterDescription','');
-            setFormDataField('filterStatus','');
-            browserInfo.filter = [];
-            getItems('browser');
+        ctrl.delFilter();
     }
-
-    /**
-     * form onload function
-     */
-    var runOnLoad = true;
-    useEffect(() => {
-        if (runOnLoad) {
-            let i = 0;
-            let filterField = '';
-            // load dictionaries
-            Translator.loadDictionaries('', dispatch);
-            // load loged user info
-            const s = Cookies.getCookie('work_loged');
-            if (s >= '{') {
-                user = JSON.parse(s);
-            }
-            // load browser info from cookie
-            browserInfo = fm.getBrowserInfo(browserName);
-
-            // setup keyup handler
-            document.addEventListener("keyup", keyUpHandler);
-            //return () => {
-            //  document.removeEventListener("keyup", keyUpHandler);
-            //};
-
-            if (id == '0') {
-                // set filterForm filed from browserInfo
-                for(i = 0; i < browserInfo.filter.length; i++) {
-                    filterField = browserInfo.filter[i].relation.fieldName;
-                    if ((filterField == 'name') ||
-                        (filterField == 'description') ||
-                        (filterField == 'staus')) {
-                        filterField = filterField.substring(0,1).toUpperCase() +
-                                    filterField.substring(1,100);  
-                        setFormDataField('filter'+filterField, browserInfo.filter[i].realtion.value);    
-                    }   
-                }
-                getItems('browser');
-            }
-            if (id != '0') {
-                browserInfo.filter = [];
-                getOneRecord(id, 'show');
-            }
-
-            runOnLoad = false;
-        }    
-    }, []);
 
     return (
                 <div id="communities" className={Styles.subPage}>
@@ -576,13 +256,13 @@ const _Communities = ( params: any ): React.JSX.Element => {
                             <div dangerouslySetInnerHTML={{ __html: formData.successMsg }}></div>
                         </div>    
                     }
-                    {(compStatus == 'loader') &&
+                    {(formData.compStatus == 'loader') &&
                         <div className="loader">
                             <img src="/img/loader.gif" />
                         </div>
                     }
                     <br /><br />
-                    {(compStatus == 'browser') && 
+                    {(formData.compStatus == 'browser') && 
                         <div className="browser">
                             <h2>{ t('communities') }</h2>
                             <div className="col_d6_p12">
@@ -623,10 +303,11 @@ const _Communities = ( params: any ): React.JSX.Element => {
                             </div>    
                             <table className={Styles.brTable}>
                                 <thead className="brHeader">
-                                    {(browserInfo.limit < 10) &&
+                                    {(window?.innerHeight < 600) &&
                                     <tr><th>{ t('SORT') }</th></tr>
                                     }
                                     <tr>
+                                        <th className={Styles.thButtons}></th>
                                         <th id="thname" onClick={thClick} className={Styles.th}>
                                             <var dangerouslySetInnerHTML={{ __html: thIcon('name',formData.order) }}></var>
                                             { t('name') }</th>
@@ -642,18 +323,20 @@ const _Communities = ( params: any ): React.JSX.Element => {
                                     </tr>    
                                 </thead>
                                 <tbody className="brBody">
-                                { formData.items.map( (item: CommunityRecord, index) => 
+                                { formData.items.map( (item: Record, index) => 
                                     <tr key={index}>
                                         <td>
                                             <button type="button" title="edit" 
-                                                onClick={() => getOneRecord(item.id,'edit')}>
+                                                onClick={() => ctrl.getOneRecord(item.id,'edit')}>
                                                 &#9997;</button>
                                             <button className="alert_danger" type="button" title="delete"
-                                                onClick={() => getOneRecord(item.id,'delete') }>
+                                                onClick={() => ctrl.getOneRecord(item.id,'delete') }>
                                                 x</button>
                                             <button type="button" title="show"
-                                                onClick={() => getOneRecord(item.id, 'show') }>
+                                                onClick={() => ctrl.getOneRecord(item.id, 'show') }>
                                                 &#9758;</button>
+                                        </td>
+                                        <td>        
                                             { item.name }</td>
                                         <td>{ item.description.substring(0,60) }</td>
                                         <td>{ item.status }</td>
@@ -672,7 +355,7 @@ const _Communities = ( params: any ): React.JSX.Element => {
                                     { (Paginator.visiblePaginator(formData.offset,
                                                                   browserInfo.limit,
                                                                   index)) && 
-                                      <button type="button" className="btn" onClick={() => getItems('browser',item)}>
+                                      <button type="button" className="btn" onClick={() => {ctrl.getItems('browser',item)}}>
                                         { index+1 }</button>
                                     }
                                     {(item == browserInfo.offset) &&
@@ -686,14 +369,14 @@ const _Communities = ( params: any ): React.JSX.Element => {
 
 
                             <div className={Styles.browserButtons}>
-                                <button type="button" className="btn" onClick={newClick} title="new">
+                                <button type="button" id="newBtn" className="btn" onClick={newClick} title="new">
                                     +{ t('new') }
                                 </button>
                             </div>
                         </div>
 
                     }   
-                    {(compStatus == 'show') && 
+                    {(formData.compStatus == 'show') && 
                         <div className={Styles.show}>
                             <h2>{ t('community') }</h2>
                             <a href={ '/resource_community.'+formData.id+'/labels' } 
@@ -749,7 +432,7 @@ const _Communities = ( params: any ): React.JSX.Element => {
                             </form>
                         </div>
                     }   
-                    {(compStatus == 'edit') && 
+                    {(formData.compStatus == 'edit') && 
                         <div className="edit">
                             <h2>{ t('community') }</h2>
                             {( formData.id == '') && <h2>{ t('new')}</h2>}
@@ -802,7 +485,7 @@ const _Communities = ( params: any ): React.JSX.Element => {
                                     { formData.updated_at }
                                 </div>
                                 <div className="formButtons">
-                                    <button type="button" id="saveBtn" className="btn_ok" onClick={saveClick}>
+                                    <button type="button" id="saveBtn" className="btn_ok" onClick={ saveClick }>
                                          &#9745;{ t('send') }
                                     </button>
                                     &nbsp;
@@ -813,23 +496,27 @@ const _Communities = ( params: any ): React.JSX.Element => {
                             </form>
                         </div>
                     }    
-                    {(compStatus == 'delete') && 
+                    {(formData.compStatus == 'delete') && 
                         <div className={Styles.deleteForm}>
-                            <h2>{formData.name}</h2>
+                            <h2>{formData.name} Community </h2>
                             <div>{ formData.description}</div>
                             <div>&nbsp;</div>
                             <div>{ t('status') }: {formData.status} </div>
                             <div>&nbsp;</div>
-                            <h3>{ t('delete') } ?</h3>
+                            <h3>{ t('deleteTitle') } ?</h3>
+                            <div>&nbsp;</div>
+                            <div>
+                                <strong>{ t('deleteWarning') }</strong>
+                            </div>
                             <div>&nbsp;</div>
                             <div className="formButtons">
                                 <button type="button" className="btn_danger"
-                                    onClick={ () => doDelete(formData.id) }>
+                                    onClick={ () => ctrl.doDelete(formData.id) }>
                                     { t('delete') }                                            
                                 </button>
                                 &nbsp;
                                 <button type="button" className="btn_primary"
-                                    onClick={ () => setCompStatus('browser') }>
+                                    onClick={ () => ctrl.browser() }>
                                     { t('cancel') }                                            
                                 </button>
                             </div>    

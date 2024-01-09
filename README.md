@@ -10,6 +10,7 @@
 - resuorce_collection  /  labels browser, add, edit, delete, show
 - resuorce  /  labels browser, add, edit, delete, show
 - human multilanguage support (defined only hungarian)
+- MVC structure
  
 Videó ismertető:
  
@@ -49,22 +50,22 @@ app
     layout.tsx             root layout
     globalstyles/
         globals.scss       Global Style
-    api
+    api/
         apiName1
             route.tsx
         apiName2
             route.tsx
-        
+    ...    
     pagename1/
         pagename1.tsx      Link to the component into component directory 
     pagename2/
         pagename2.tsx      
-         
+    ...     
     [id]/parpagename1/
         parmagename1.tsx
     [id]/parpagename2/
         parmagename2.tsx
-    
+    ...
     
 components
     SiteLayout/             web site layout
@@ -76,11 +77,18 @@ components
         index.ts
         PageName.tsx
         PageName.module.scss
-    PageName2/              PaheName2  React komponens
+    PageName2/              PageName2  React komponens
         index.ts
         PageName.tsx
         PageName.module.scss
-    
+    ....    
+objects                     auxiliary objects, classes  
+    DatabaseInterface/
+    FormManager/
+    Paginator/    
+    Controller.tsx
+    Model.tsx
+    Mock.tsx
 public
     dictionaries/           dictionaries (json files)
     img/                    images, videos

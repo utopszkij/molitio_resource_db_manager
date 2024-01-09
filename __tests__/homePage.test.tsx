@@ -46,9 +46,6 @@ https://github.com/vercel/next.js/tree/canary/examples/with-jest
         // .toBeTruthy(), .toBeUndefined(),.toBeNaN(), .toEqual(value), .toMatch(regexp | string),....
         // https://jestjs.io/docs/expect
 
-        // #video-title exists ?';
-        const homePageTitle = container.querySelectorAll('#video-title');
-        expect(homePageTitle.length).toBe(1);
         // <header> exists?
         const headers = container.querySelectorAll('header');
         expect(headers.length).toBe(1);

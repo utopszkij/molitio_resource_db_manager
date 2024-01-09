@@ -42,7 +42,7 @@ export default function Footer(): React.JSX.Element {
                         <strong>Email:</strong> info@example.com
                         <br />
                         <h2>{ t('USE_OPEN_SOURCE') }</h2>
-                        nextjs, react, typescript, javascript
+                        nextjs, react, typescript, javascript, hasura
                     </div>
                 </div>
                 <div className={styles.socialLine}>

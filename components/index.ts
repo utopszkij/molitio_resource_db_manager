@@ -8,5 +8,6 @@ export * from './SiteLayout';
 export * from './Communities';
 export * from './Collections';
 export * from './Resources';
+export * from './Members';
 export * from './LabelTypes';
 export * from './Labels';

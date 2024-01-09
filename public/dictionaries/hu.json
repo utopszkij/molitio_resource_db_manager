@@ -57,5 +57,8 @@
 "collection":"Erőforrás készlet",
 "parentName":"Tulajdonos neve",
 
+"deleteTitle": "Aktuális rekord és összes alrekordjának törlése",
+"deleteWarning":"Ez a müvelet nem visszavonható!",
+
 "end":"vége"
 }

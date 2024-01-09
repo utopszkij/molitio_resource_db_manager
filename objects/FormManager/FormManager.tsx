@@ -14,6 +14,7 @@ export type BrowserInfo = {
     paginatorSize:number  // count of paginato items in left and right from actual page
 };
 
+
 export const fm =  {
     setFormDataField: (fname:string, value: any):void => {},
     
@@ -21,6 +22,19 @@ export const fm =  {
         fm.setFormDataField = f;
     },
     
+    /**
+     * initialized browser info 
+     */
+    browserInfo0: {
+        name:'',
+        filter: [],
+        offset:0,
+        order:'name: asc',
+        limit:10,
+        paginatorSize:10
+    },
+
+
     /**
      * get cookie with default value
      * @param name 
@@ -165,6 +179,19 @@ export const fm =  {
             nick:"admin",
             avatar:"noavatar.png",
             roles:[""]
-    }
+    },
+
+    /**
+     * 
+     * @returns get logged user  TEST VERSION !!!!!!
+     */
+    getCurrentUser: () => {
+        let result = fm.testUser;
+        const s = Cookies.getCookie('work_loged');
+        if (s >= '{') {
+            result =  JSON.parse(s);
+        }
+        return result;
+    } 
     
 }

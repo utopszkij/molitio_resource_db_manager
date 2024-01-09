@@ -18,21 +18,10 @@ import { insert, update, getRecords, getTotal, getRecord, remove, preprocessor} 
 import { BrowserInfo, fm } from '../../objects/FormManager';
 // paginator support
 import { Paginator } from '../../objects/Paginator';
-/**
- * Community record
- */
-export type LabelsRecord = {
-    id: string,
-    created_by: string,
-    created_at: string,
-    updated_by: string,
-    updated_at: string,
-    parent_table: string,
-    parent_id : string,
-    resource_label_type_id: string,
-    value: string,
-    resource_label_type:{ type_name: string, unit: string },
-}
+import { Record } from './LabelsModel';
+import { LabelController, FormData } from './LabelsController';
+
+const ctrl = new LabelController();
 
 /**
 * resources community manager REACT component
@@ -43,13 +32,12 @@ const _Labels = ( params: any ): React.JSX.Element => {
     // general data
     const browserName = 'labels';
     const dispatch = useAppDispatch();
-    const [compStatus, setCompStatus] = useState(''); // 'browser'|'show'|'edit'|'delete'|'none'
 
     let w = params.id.split('.');
     let parentTable = w[0];
     let parentId =  w[1];
 
-    let record:LabelsRecord = {
+    let record:Record = {
         id: '',
         created_at: '',
         created_by: '',
@@ -60,7 +48,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
         resource_label_type_id: '',
         value: '',
         resource_label_type:{type_name:'', unit:''}
-        } 
+    } 
 
     // test user data, must overwrite it!
     let user:AuthenticatedUser = {
@@ -87,6 +75,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
      *  data for form 
      */ 
     const [formData, setFormData] = React.useState({
+        compStatus: '',
         // messages
         errorMsg: '',
         successMsg: '',
@@ -126,8 +115,35 @@ const _Labels = ( params: any ): React.JSX.Element => {
             [fname]: value,
         }));
     }
-    fm.init(setFormDataField); // setup formManager
+
+    const getFormData = (): FormData => {
+        return formData;
+    }
+
+    // refresh ctrl.getFormData where change formData
+    ctrl.getFormData = getFormData;
+
     
+    /**
+     * form onload function
+     */
+    var runOnLoad = true;
+    useEffect(() => {
+        if (runOnLoad) {
+            fm.init(setFormDataField); // setup formManager
+            // ENTER keup --> default button action
+            document.addEventListener("keyup", keyUpHandler);
+            // load dictionaries
+            Translator.loadDictionaries('', dispatch);
+            // load browser info from cookie
+            ctrl.browserInfo = fm.getBrowserInfo(ctrl.browserName);
+            // onload functions
+            ctrl.onLoad(params.id,setFormDataField, getFormData);
+            runOnLoad = false;
+        }    
+    }, []);
+
+
     /**
      * errorMsg or successmsg close btn click event handler
      */
@@ -139,58 +155,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
      * send click event handler
      */
     const saveClick = () => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        const errorMsg = validator();
-        if (errorMsg != '') {
-            setCompStatus('edit');
-            fm.setErrorMsg(errorMsg);
-        } else {
-            if (formData.id == '') {
-                let record = {
-                    resource_label_type_id : formData.resource_label_type_id,
-                    value : formData.value,
-                    parent_table : parentTable,
-                    parent_id: parentId,
-                    created_at : fm.getCurrentDate(),
-                    created_by : user.id,
-                } 
-                insert('resource_schema','table_label', record)
-                .then((res) => {
-                    res = preprocessor(res);
-                    if (res.error != undefined) {
-                        fm.setErrorMsg(res.error);
-                    } else {
-                        fm.setSuccessMsg(t('SAVED'));
-                        window?.setTimeout(fm.clearMsgs,2000);
-                        getItems('browser');
-                    }
-                })
-            } else {
-                let record = {
-                    id: formData.id,
-                    resource_label_type_id : formData.resource_label_type_id,
-                    value : formData.value,
-                    parent_table : parentTable,
-                    parent_id: parentId,
-                    created_at : formData.created_at,
-                    created_by : formData.created_by,
-                    updated_at : fm.getCurrentDate(),
-                    updated_by : user.id,
-                } 
-                update('resource_schema','table_label',record.id, record)
-                .then((res) => {
-                    res = preprocessor(res);
-                    if (res.error != undefined) {
-                        fm.setErrorMsg(res.error);
-                    } else {
-                        fm.setSuccessMsg(t('SAVED'));
-                        window?.setTimeout(fm.clearMsgs,2000);
-                        getItems('browser');
-                    }
-                })
-            }
-        }
+        ctrl.save();
     }
 
     /**
@@ -199,23 +164,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
     const cancelClick = () => {
         window?.scrollTo(0,0);
         fm.clearMsgs();
-        setCompStatus('browser')
-    }
-
-    /**
-     * form data validator
-     * @returns string
-     */
-    const validator = (): string => {
-        fm.clearMsgs();
-        let result = '';
-        if (formData.resource_label_type_id == '') {
-            result += t('LABEL_TYPE_REQUIRED')+'<br />';
-            fm.validMarker('resource_label_type_id',false);
-        } else {
-            fm.validMarker('resource_label_type',true);
-        }
-        return result
+        setFormDataField('compStatus','browser');
     }
 
     /**
@@ -223,52 +172,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
      * use browserInfo, call getTotal
      */
     const getItems = (newStatus: string, newOffset?:number) => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        if (newOffset != undefined) {
-            browserInfo.offset = newOffset;
-            setFormDataField('offset',newOffset);
-        }
-        getRecords('resource_schema', 'table_label',
-            ['id','resource_label_type_id','value','created_at',
-              'user_creator.username_public', 'user_modifier.username_public', 
-              'resource_label_type.type_name','resource_label_type.unit' ], 
-            [browserInfo.order], 
-            browserInfo.filter,
-            browserInfo.offset,
-            browserInfo.limit
-        ).then( (res) => { 
-            res = preprocessor(res);
-            if (res.error != undefined) {
-                fm.setErrorMsg(res.error);
-            } else {
-                setFormDataField('items',res);
-                setFormDataField('order',browserInfo.order);
-                setFormDataField('offset',browserInfo.offset);
-                fm.saveBrowserInfo(browserInfo);
-                getTotalCount(newStatus);
-            }   
-        })        
-
-    }
-
-    /**
-     * get total record count from database
-     * @param newStatus 
-     */
-    const getTotalCount = (newStatus: string) => {
-        getTotal('resource_schema', 'table_label',
-            browserInfo.filter
-        ).then( (res) => { 
-            res = preprocessor(res);
-            if (res.error != undefined) {
-                fm.setErrorMsg(res.error);
-            } else {
-                setFormDataField('pages',Paginator.buildPages(res.count, browserInfo.limit));
-                setFormDataField('total',res.count);
-                setCompStatus(newStatus);
-            }   
-        })        
+        ctrl.getItems(newStatus, newOffset)
     }
 
     /**
@@ -277,37 +181,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
      * @param newStatus 
      */
     const getOneRecord = (id: string, newStatus: string) => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        getRecord('resource_schema', 'table_label',
-            ['id','resource_label_type_id','value','created_at','created_by',
-              'updated_at','updated_by',  
-              'user_creator.username_public', 'user_modifier.username_public',
-              'resource_label_type.type_name','resource_label_type.unit' ], 
-            id  
-        ).then( (res) => { 
-            res = preprocessor(res);
-            if (res.error != undefined) {
-                fm.setErrorMsg(res.error);
-            } else {
-                if (res.length > 0) {
-                    setFormDataField('id',res[0].id);
-                    setFormDataField('resource_label_type_id',res[0].resource_label_type_id);
-                    setFormDataField('resource_label_type',{
-                        type_name: res[0].resource_label_type.type_name,
-                        unit: res[0].resource_label_type.unit
-                    });
-                    setFormDataField('value',res[0].value);
-                    setFormDataField('created_at',res[0].created_at);
-                    setFormDataField('updated_at',res[0].updated_at);
-                    setFormDataField('created_by',res[0].created_by);
-                    setFormDataField('updated_by',res[0].updated_by);
-                    setFormDataField('creatorName',res[0].user_creator.username_public);
-                    setFormDataField('updaterName',res[0].user_modifier?.username_public);
-                }    
-                getTotalCount(newStatus);
-            }   
-        })        
+        ctrl.getOneRecord(id,newStatus)
     }
 
     /**
@@ -315,32 +189,14 @@ const _Labels = ( params: any ): React.JSX.Element => {
      * @param id 
      */
     const showClick = (id: string) => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        fm.saveBrowserInfo(browserInfo);
-        getOneRecord(id, 'show');
+        ctrl.getOneRecord(id, 'show')
     }  
 
     /**
      * new button click event handler
      */
     const newClick = () => {
-        window?.scrollTo(0,0);
-        fm.saveBrowserInfo(browserInfo);
-        document.getElementById('resource_label_type_id')?.setAttribute('class','');
-        document.getElementById('value')?.setAttribute('class','');
-        fm.clearMsgs();
-        // formData init 
-        setFormDataField('id','');
-        setFormDataField('resource_label_type_id','');
-        setFormDataField('value','');
-        setFormDataField('created_at',fm.getCurrentDate());
-        setFormDataField('created_by',user.id);
-        setFormDataField('creatorName',user.nick);
-
-        // display edit form
-        setCompStatus('edit');
-        window.setTimeout("document.getElementById('resource_label_type_id')?.focus()",1000);
+        ctrl.new();
     }
 
     /**
@@ -348,20 +204,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
      * @param id 
      */
     const doDelete = (id: string) => {
-        window?.scrollTo(0,0);
-        setCompStatus('loader');
-        remove('resource_schema','table_label', id)
-        .then( (res) => {
-            res = preprocessor(res);
-            console.log(res);
-            if (res.error != undefined) {
-                fm.setErrorMsg(res.error);
-            } else {    
-                fm.setSuccessMsg( t('DELETED') );
-                window?.setTimeout(fm.clearMsgs,2000);
-                getItems('browser');
-            }    
-        })
+        ctrl.doDelete(id);
     }
 
     /**
@@ -390,21 +233,8 @@ const _Labels = ( params: any ): React.JSX.Element => {
         // total, offset, limit használatával új offset -et határoz meg és
         // items-et olvas az adatbázisból
         const id = e.target.id;
-        let newOffset = formData.offset;
-        if (id == 'paginatorFirst') newOffset = 0;
-        if (id == 'paginatorPrev') newOffset = formData.offset - browserInfo.limit;
-        if (id == 'paginatorNext') newOffset = formData.offset + browserInfo.limit;
-        if (id == 'paginatorLast') {
-            while (newOffset < formData.total ) {
-                newOffset = newOffset + browserInfo.limit;
-            }
-            if (newOffset > formData.total) {
-                newOffset = newOffset - browserInfo.limit;
-            }    
-        } 
-        if (newOffset < 0) newOffset = 0;
-        if (newOffset >= formData.total) newOffset = newOffset - browserInfo.limit;
-        browserInfo.offset = newOffset;
+
+        ctrl.doPaginator(id);
         getItems('browser');
     }
 
@@ -430,34 +260,15 @@ const _Labels = ( params: any ): React.JSX.Element => {
      * @param e 
     */
     const thClick = (e:any) => {
-            if (formData.offset != browserInfo.offset ) browserInfo.offset = formData.offset;
-            let newOrder = formData.order;
-            const name = e.target.id.substring(2,100);
-            if (formData.order == name+': asc') {
-                newOrder = name+': desc';
-            } else {
-                newOrder = name+': asc';
-            }
-            browserInfo.order = newOrder;
-            getItems('browser');
+        let name = e.target.id.substring(2,100);
+        ctrl.reOrder(name);
     }
 
     /**
      * user click formFilter "start" event handler
     */
     const doFilter = () => {
-            setFormDataField('offset',0);
-            browserInfo.offset = 0;
-            let operation = '';
-            if (formData.filterTypeName != '') {
-                browserInfo.filter[2] = {
-                    operation:operation,
-                    relation:{field:'resource_label_type.type_name', relType:'eq', 
-                        value:formData.filterTypeName}
-                };
-                operation = 'and';
-            }    
-            getItems('browser');
+            ctrl.doFilter();
             return false;
     }
 
@@ -465,9 +276,8 @@ const _Labels = ( params: any ): React.JSX.Element => {
      * user click "del filter" event handler
      */
     const delFilter = () => {
-            setFormDataField('filterTypeName','');
-            browserInfo.filter[2] = undefined;
-            getItems('browser');
+        ctrl.delFilter();
+        return false;
     }
 
     /**
@@ -476,90 +286,23 @@ const _Labels = ( params: any ): React.JSX.Element => {
      */
     const parentLink = ():string => {
         let result = '';
-        if (parentTable == 'resource_community') {
-            result = '/'+parentId+'/communities';
+        if (formData.parent_table == 'resource_community') {
+            result = '/'+formData.parent_id+'/communities';
         }
-        if (parentTable == 'resource_collection') {
-            result = '/'+parentId+'/collections';
+        if (formData.parent_table == 'resource_collection') {
+            result = '/'+formData.parent_id+'/collections';
         }
-        if (parentTable == 'resource') {
-            result = '/'+parentId+'/resource';
+        if (formData.parent_table == 'resource') {
+            result = '/'+formData.parent_id+'/resources';
         }
         return result;
     }
-    /**
-     * form onload function
-     */
-    var runOnLoad = true;
-    useEffect(() => {
-        if (runOnLoad) {
-            let i = 0;
-            let filterField = '';
-            // load dictionaries
-            Translator.loadDictionaries('', dispatch);
-            // load loged user info
-            const s = Cookies.getCookie('work_loged');
-            if (s >= '{') {
-                user = JSON.parse(s);
-            }
-            // load browser info from cookie
-            browserInfo = fm.getBrowserInfo(browserName);
-            browserInfo.filter[0] = {
-                    operation:'',
-                    relation:{
-                        field: 'parent_table',
-                        relType: 'eq',
-                        value:parentTable
-                    }
-                };
-            browserInfo.filter[1] = {
-                    operation:'and',
-                    relation:{
-                        field: 'parent_id',
-                        relType: 'eq',
-                        value:parentId
-                    }
-                };
-            browserInfo.order = 'resource_label_type.type_name: asc';
-
-            // set filterForm field from browserInfo
-            for(i = 0; i < browserInfo.filter.length; i++) {
-                filterField = browserInfo.filter[i].relation.fieldName;
-                if (filterField == 'resource_label_type.type_name') {
-                    setFormDataField('filterTypeName', browserInfo.filter[i].realtion.value);    
-                }   
-            }
-
-            // setup keyup handler
-            document.addEventListener("keyup", keyUpHandler);
-            //return () => {
-            //  document.removeEventListener("keyup", keyUpHandler);
-            //};
-
-            // parentName beolvasása
-            getRecord('resource_schema', parentTable,['name'],parentId)
-            .then ( (res) => {
-                res = preprocessor(res);
-                const parentName = res[0].name;
-                // labelTypes.tömb beolvasása
-                getRecords('resource_schema','resource_label_type',
-                    ['id','type_name','unit'],['type_name: asc'])
-                .then((res) => {
-                    res = preprocessor(res);
-                    setFormDataField('parentName',parentName);
-                    setFormDataField('labelTypes',res);
-                    getItems('browser');
-                } )
-            })
-            runOnLoad = false;
-        }    
-    }, []);
 
     return (
                 <div id="labels" className={Styles.subPage}>
                     { (parentId > '0') &&
                     <h2><a href={ parentLink() } className={Styles.parentLink}>
-                        &#9758;{parentTable} . { formData.parentName }</a></h2>
+                        &#9758; { formData.parentName } {parentTable} </a></h2>
                     }
                     {(formData.errorMsg != '') &&
                         <div className="errorMsg">
@@ -577,13 +320,13 @@ const _Labels = ( params: any ): React.JSX.Element => {
                             <div dangerouslySetInnerHTML={{ __html: formData.successMsg }}></div>
                         </div>    
                     }
-                    {(compStatus == 'loader') &&
+                    {(formData.compStatus == 'loader') &&
                         <div className="loader">
                             <img src="/img/loader.gif" />
                         </div>
                     }
                     <br /><br />
-                    {(compStatus == 'browser') && 
+                    {(formData.compStatus == 'browser') && 
                         <div className="browser">
                             <h2>Labels browser</h2>
                             <div className="col_d6_p12">
@@ -610,24 +353,25 @@ const _Labels = ( params: any ): React.JSX.Element => {
                                     <tr><th>{ t('SORT') }</th></tr>
                                     }
                                     <tr>
-                                        <th id="thresource_label_type.type_name" onClick={thClick} className={Styles.th}>
+                                        <th></th>
+                                        <th id="thresource_label_type.type_name">
                                             <var dangerouslySetInnerHTML={{ __html: thIcon('resource_label_type.type_name',formData.order) }}></var>
                                             { t('label_type_name') }</th>
-                                        <th id="thvalue" onClick={thClick} className={Styles.th}>
+                                        <th id="thvalue">
                                             <var dangerouslySetInnerHTML={{ __html: thIcon('value',formData.order) }}></var>
                                             { t('value') }</th>
-                                        <th id="thunit" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('unit',formData.order) }}></var>
+                                        <th id="thresource_label_type.unit">
+                                            <var dangerouslySetInnerHTML={{ __html: thIcon('resource_label_type.unit',formData.order) }}></var>
                                             { t('unit') }</th>
-                                        <th id="thcreated_at" onClick={thClick} className={Styles.th}>
+                                        <th id="thcreated_at">
                                             <var dangerouslySetInnerHTML={{ __html: thIcon('created_at',formData.order) }}></var>
                                             { t('created_at') }</th>
                                     </tr>    
                                 </thead>
                                 <tbody className="brBody">
-                                { formData.items.map( (item: LabelsRecord, index) => 
+                                { formData.items.map( (item: Record, index) => 
                                     <tr key={index}>
-                                        <td>
+                                        <td className={Styles.thButtons}>
                                             <button type="button" title="edit" 
                                                 onClick={() => getOneRecord(item.id,'edit')}>
                                                 &#9997;</button>
@@ -637,6 +381,8 @@ const _Labels = ( params: any ): React.JSX.Element => {
                                             <button type="button" title="show"
                                                 onClick={() => getOneRecord(item.id, 'show') }>
                                                 &#9758;</button>
+                                        </td>
+                                        <td>        
                                             { item.resource_label_type.type_name }</td>
                                         <td>{ item.value.substring(0,60) }</td>
                                         <td>{ item.resource_label_type.unit }</td>
@@ -675,7 +421,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
                         </div>
 
                     }   
-                    {(compStatus == 'show') && 
+                    {(formData.compStatus == 'show') && 
                         <div className={Styles.show}>
                             <h2>{ t('labels') }</h2>
                             <a href={ '/resource_labels.'+formData.id+'/labels'} 
@@ -688,7 +434,9 @@ const _Labels = ( params: any ): React.JSX.Element => {
                                 </div>
                                 <div className="formControl">
                                     <label>{ t('name')}:</label>
-                                    { formData.resource_label_type.type_name }
+                                    { formData.resource_label_type.type_name }&nbsp;
+                                    [{ formData.resource_label_type.unit }]&nbsp;
+                                    
                                 </div>
                                 <div className="formControl">
                                     <label>{ t('description')}:</label>
@@ -724,7 +472,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
                             </form>
                         </div>
                     }   
-                    {(compStatus == 'edit') && 
+                    {(formData.compStatus == 'edit') && 
                         <div className="edit">
                             <h2>{ t('labels') }</h2>
                             {( formData.id == '') && <h2>{ t('new')}</h2>}
@@ -782,7 +530,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
                             </form>
                         </div>
                     }    
-                    {(compStatus == 'delete') && 
+                    {(formData.compStatus == 'delete') && 
                         <div className={Styles.deleteForm}>
                             <h2>{formData.resource_label_type.type_name}</h2>
                             <div>{ formData.value}</div>
@@ -797,7 +545,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
                                 </button>
                                 &nbsp;
                                 <button type="button" className="btn_primary"
-                                    onClick={ () => setCompStatus('browser') }>
+                                    onClick={ () => setFormDataField('compStatus','browser') }>
                                     { t('cancel') }                                            
                                 </button>
                             </div>    

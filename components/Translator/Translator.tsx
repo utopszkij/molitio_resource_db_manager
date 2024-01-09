@@ -23,11 +23,13 @@ const loadModulDictionary = (modulName:string, lng: string, dispatch:Function) =
                             items: response2,
                             loaded: true
                         }));
-            }).catch( (error) => { console.log('error in json parse '+modulName+' '+lng);
-                                   console.log(error);
+            }).catch( (error) => { 
+                // console.log('error in json parse '+modulName+' '+lng);
+                // console.log(error);
             })
-        }).catch( (error) => { console.log('error dictionary fetch '+modulName+' '+lng);
-                               console.log(error); 
+        }).catch( (error) => { 
+            // console.log('error dictionary fetch '+modulName+' '+lng);
+            // console.log(error); 
         })
     } else {
         dispatch(setDictionary({
@@ -52,11 +54,13 @@ const loadGlobalDictionary = (lng: string, dispatch:Function) => {
                         loaded: true
             }));
             dictionaryStatus = 'loaded';
-        }).catch( (error) => { console.log('error in json parse global '+lng);
-                               console.log(error);
+        }).catch( (error) => {
+             // console.log('error in json parse global '+lng);
+             // console.log(error);
         })
-    }).catch( (error) => { console.log('error dictionary fetch global '+lng);
-                           console.log(error); 
+    }).catch( (error) => { 
+        // console.log('error dictionary fetch global '+lng);
+        // console.log(error); 
     })
 }
 
@@ -99,64 +103,6 @@ async function fetchGraphQL(
                         params: Record<string, string>) {
     return fetchGraphQL(operations,queryName, params);
   }
-
-    /*  
-        Tapasztalatok:  
-        - a hasurában definiált relationships -ben össtekapcsolt táblák szerepelhetnek
-          a select és where részben (talán a foreign key definició ezt létre is hozza)
-        - a 'MyQuery'  csak korábban a hasurában definiált lehet
-        - viszont az "operations" stringben lehet változás a select oszlopokban
-          és a where reláció kodokban és operátorokban is
-          reláció kodok: _eq, _gt, _gte, _lt, _lte, _neq, _ilke, _nlike, _regex, _nlegex, _regex, _in
-          oprátorok: _and, _or, _not
-    */ 
-
-   async function dbQuery(queryName: string, 
-                    variables: Record<string, string>,
-                    dispatch: Function) {
-        const queries = {
-            MyQuery: { operations: `
-                        query MyQuery($dicName: String = "dictionary_global_hu") {
-                            resource_schema_resource_label(
-                                where: {resource: {name: {_eq: $dicName}}, _and: 
-                                       {resource_label_type: {type_name: {_eq: "dictionary_item"}}}}
-                            ){
-                              value
-                              id
-                            }
-                        }
-                        `,
-                      resultProcessor: (result:object, error?: any) => {
-                         console.log('dbQuery resutlProcessor');
-                         if (error == undefined) {
-                            console.log(result);
-                            dispatch(setDictionary({
-                                name: 'global.hu',
-                                position:1,
-                                items: {},
-                                loaded: true
-                            })); 
-                            console.log('dispatch után');
-                        } else {
-                            console.log(error);
-                        }
-                       }
-            }
-        }                        
-        type ObjectKey = keyof typeof queries;
-        const key = queryName as ObjectKey;
-        const query = queries[key];
-        return fetchGraphQL(query.operations,queryName, variables)
-               .then(query.resultProcessor)
-               .catch(error => { 
-                   console.log(queryName+' error');
-                   console.log(error); 
-                   console.log('variables:');
-                   console.log(variables);
-                })
-    }
-// ======================== Hasura test =====================================
-
 
 /**
 * Global variable; this marked then dictionary loading status.
@@ -202,40 +148,7 @@ export const Translator:TranslatorType = {
             (Translator.translatorData.dictionaries[1].name != 'global.'+lng)) { 
             loadGlobalDictionary(lng, dispatch);
         }    
-        // ======================== Hasura test =====================================
-
-        // console.log('dbQuery jön');
-        // dbQuery('MyQuery',{dicName:'dictionary_global_hu'}, dispatch); 
-        // console.log('dbQuery után');
-
-        /*
-        console.log('fetchMyQuery jön');
-        fetchMyQuery('MyQuery',operations, {dicName: 'dictionary_global_hu'})
-            .then(({ data, errors }) => {
-                if (errors) {
-                    console.log('fetchMyQuery error 1');
-                    console.error(errors);
-                }
-                console.log('fetchMyQuery result');
-                console.log(data);
-                console.log('dispatch jön');
-                dispatch(setDictionary({
-                    name: 'global.'+lng,
-                    position:1,
-                    items: data,
-                    loaded: true
-                }));
-                console.log('dispatch után');
-                }
-            )
-            .catch(error => {
-              console.log('fetchMyQuery error 2');
-              console.error(error);
-            });
-            console.log('fetchMyQuery után');
-        */    
-        // ======================== Hasura test =====================================
-        
+       
     },
     
     /**
@@ -267,7 +180,7 @@ export const Translator:TranslatorType = {
      */
     t: (token: string, param1?: string, param2?: string, param3?: string): string => {
         let key:number = 0;
-        let result = '';
+        let result = token;
         let loaded = false;
         let dic:DictionaryType;
         if (Translator.translatorData.dictionaries.length > 0) {

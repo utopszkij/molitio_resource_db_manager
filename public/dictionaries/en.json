@@ -24,5 +24,9 @@
 "ASZF":"General Terms of Use",
 "POLICY":"Privacy Policy",
 "FAQ":"FAQ",
+
+"deleteTitle": "Delete this record and all childrens",
+"deleteWarning":"Can not restore !",
+
 "end":"end"
 }

@@ -107,7 +107,8 @@ async function fetchGraphQL(operationsDoc: string, operationName: string , varia
  * @return Json Promise 
  */
 function executeMyMutation(operationsDoc: string, graphQName: string) {
-    return fetchGraphQL(
+  //console.log(operationsDoc);
+  return fetchGraphQL(
       operationsDoc,
       graphQName,
       {}
@@ -121,7 +122,8 @@ function executeMyMutation(operationsDoc: string, graphQName: string) {
  * @return Json Promise 
  */
 function fetchMyQuery(operationsDoc: string, graphQName: string) {
-    return fetchGraphQL(
+  //console.log(operationsDoc);
+  return fetchGraphQL(
         operationsDoc, 
         graphQName, 
         {});
@@ -176,7 +178,6 @@ export async function update(schema: string, table: string, id:string, record:ob
         { id }
         }
     `;    
-    console.log(operationsDoc);
   return executeMyMutation(operationsDoc, graphQName);
 }
 
@@ -198,7 +199,6 @@ export async function updateRecords(schema: string, table: string, filter:Relati
     }
   }    
   `;    
-  console.log(operationsDoc);
 return executeMyMutation(operationsDoc, graphQName);
 }
 
@@ -219,7 +219,6 @@ export async function remove(schema: string, table: string, id:string) {
       }
       }    
   `;   
-  console.log(operationsDoc); 
   return executeMyMutation(operationsDoc, graphQName);
 }
 
@@ -239,7 +238,6 @@ export async function removeRecords(schema:string, table:string, filter:Relation
         }
         }    
     `;   
-    console.log(operationsDoc); 
     return executeMyMutation(operationsDoc, graphQName);
 }
 
@@ -387,9 +385,15 @@ export async function getRecords(schema: string, table: string,
     const whereStr = buildWhereStr(filter);
     const columnsStr = buildColumnsStr(columns);
     const ordersStr = buildOrdersStr(orders);
+    let limitStr ='';
+    if (limit == 0) {
+      limitStr = '';
+    } else {
+      limitStr = 'limit: '+limit+',';
+    }
     const operationsDoc = `
     query `+graphQName+` {
-        `+schema+`_`+table+`(limit: `+limit+`, 
+        `+schema+`_`+table+`(`+limitStr+` 
                              offset: `+offset+`, 
                              order_by: `+ordersStr+`,
                              where: `+whereStr+`
@@ -399,7 +403,6 @@ export async function getRecords(schema: string, table: string,
         }
     }    
     `; 
-    console.log(operationsDoc);
     return fetchMyQuery(operationsDoc, graphQName);
 
 }
@@ -409,7 +412,7 @@ export async function getRecords(schema: string, table: string,
  * @param schema 
  * @param table 
  * @param filter 
- * @returm json promise  {data:{ resource_table_aggregate: { aggreage:{count:number}}}} 
+ * @returm json promise  {data:{ resource_table_aggregate: { aggregate:{count:number}}}} 
  */
 export async function getTotal(schema: string, table: string,
     filter: Relations) {
@@ -424,7 +427,6 @@ export async function getTotal(schema: string, table: string,
       }
     }    
     `;     
-    console.log(operationsDoc);
     return fetchMyQuery(operationsDoc, graphQName);
 
 }
