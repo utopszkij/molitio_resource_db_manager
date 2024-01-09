@@ -120,9 +120,10 @@ export class LabelController extends Controller {
      */
     getOneRecord = (id: string, newStatus: string) => {
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         this.model.getRecord(id)
         .then( (res) => { 
+            this.waiting(false);
             res = preprocessor(res);
             if (res.error != undefined) {
                 fm.setErrorMsg(res.error);
@@ -216,18 +217,18 @@ export class LabelController extends Controller {
     }
 
     /**
-     * send click event handler
+     * send click event  handler
      */
     save = () => {
         window?.scrollTo(0,0);
         let formData = this.getFormData();
-        this.setFormDataField('compStatus','loader');
         const errorMsg = this.validator();
         let record: {};
         if (errorMsg != '') {
             this.setFormDataField('compStatus','edit');
             fm.setErrorMsg(errorMsg);
         } else {
+            this.waiting(true);
             if (formData.id == '') {
                 record = {
                     resource_label_type_id : formData.resource_label_type_id,
@@ -252,6 +253,7 @@ export class LabelController extends Controller {
             }    
             this.model.save(record)
             .then((res) => {
+                this.waiting(false);
                 res = preprocessor(res);
                 if (res.error != undefined) {
                     fm.setErrorMsg(res.error);

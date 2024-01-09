@@ -252,11 +252,7 @@ const _LabelTypes = ( params: any ): React.JSX.Element => {
                             <div dangerouslySetInnerHTML={{ __html: formData.successMsg }}></div>
                         </div>    
                     }
-                    {(formData.compStatus == 'loader') &&
-                        <div className="loader">
-                            <img src="/img/loader.gif" />
-                        </div>
-                    }
+                    <div id="waiting"></div>
                     <br /><br />
                     {(formData.compStatus == 'browser') && 
                         <div className="browser">
@@ -298,13 +294,16 @@ const _LabelTypes = ( params: any ): React.JSX.Element => {
                                     <tr>
                                         <th className={Styles.thButtons}></th>
                                         <th id="thtype_name" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('type_name',formData.order) }}></var>
+                                            <var onClick={() => ctrl.reOrder('type_name')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('type_name',formData.order) }}></var>
                                             { t('type_name') }</th>
                                         <th id="thunit" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('unit',formData.order) }}></var>
+                                            <var onClick={() => ctrl.reOrder('unit')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('unit',formData.order) }}></var>
                                             { t('unit') }</th>
                                         <th id="thcreated_at" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('created_at',formData.order) }}></var>
+                                            <var onClick={() => ctrl.reOrder('created_at')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('created_at',formData.order) }}></var>
                                             { t('created_at') }</th>
                                     </tr>    
                                 </thead>

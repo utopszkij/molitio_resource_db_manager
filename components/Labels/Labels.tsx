@@ -320,11 +320,7 @@ const _Labels = ( params: any ): React.JSX.Element => {
                             <div dangerouslySetInnerHTML={{ __html: formData.successMsg }}></div>
                         </div>    
                     }
-                    {(formData.compStatus == 'loader') &&
-                        <div className="loader">
-                            <img src="/img/loader.gif" />
-                        </div>
-                    }
+                    <div id="waiting"></div>
                     <br /><br />
                     {(formData.compStatus == 'browser') && 
                         <div className="browser">
@@ -354,17 +350,25 @@ const _Labels = ( params: any ): React.JSX.Element => {
                                     }
                                     <tr>
                                         <th></th>
-                                        <th id="thresource_label_type.type_name">
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('resource_label_type.type_name',formData.order) }}></var>
+                                        <th className={Styles.th} id="thresource_label_type.type_name"
+                                            onClick={thClick}>
+                                            <var onClick={() => ctrl.reOrder('resource_label_type.type_name')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('resource_label_type.type_name',formData.order) }}></var>
                                             { t('label_type_name') }</th>
-                                        <th id="thvalue">
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('value',formData.order) }}></var>
+                                        <th className={Styles.th} id="thvalue"
+                                            onClick={thClick}>
+                                            <var onClick={() => ctrl.reOrder('value')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('value',formData.order) }}></var>
                                             { t('value') }</th>
-                                        <th id="thresource_label_type.unit">
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('resource_label_type.unit',formData.order) }}></var>
+                                        <th className={Styles.th} id="thresource_label_type.unit"
+                                            onClick={thClick}>
+                                            <var onClick={() => ctrl.reOrder('resource_label_type.unit')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('resource_label_type.unit',formData.order) }}></var>
                                             { t('unit') }</th>
-                                        <th id="thcreated_at">
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('created_at',formData.order) }}></var>
+                                        <th className={Styles.th} id="thcreated_at"
+                                            onClick={thClick}>
+                                            <var onClick={() => ctrl.reOrder('created_at')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('created_at',formData.order) }}></var>
                                             { t('created_at') }</th>
                                     </tr>    
                                 </thead>

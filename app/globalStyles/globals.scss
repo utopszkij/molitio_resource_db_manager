@@ -16,6 +16,10 @@
         position:fixed; top:100px; left:50px; width:50%; height:auto; z-index:10}
     .msgCloseBtn {text-align:right}
 .paginator button {font-size:18px; padding:5px; margin:10px; width:30px}
+.loader {position:fixed; z-index:10; top:20px;  width:100%; text-align:center }
+.loader img {width:60px}    
+
+
 
 .alert_danger {
     background-color: red;
@@ -555,7 +559,4 @@
     .brBody tr {display:block; border-style:solid; border-width:1px; margin:2px 10px 2px 2px}
     .brBody td  {display:block;  margin:5px; border-style:none; border-color:transparent}
     .brBody button {margin:2px 10px 2px 2px}
-    .loader {position:fixed; z-index:10; top:200px; 
-        display:block; width:100%; text-align:center }
-    .loader img {width:60px}    
 }

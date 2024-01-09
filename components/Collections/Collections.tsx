@@ -265,11 +265,7 @@ const _Collections = ( params: any ): React.JSX.Element => {
                             <div dangerouslySetInnerHTML={{ __html: formData.successMsg }}></div>
                         </div>    
                     }
-                    {(formData.compStatus == 'loader') &&
-                        <div className="loader">
-                            <img src="/img/loader.gif" />
-                        </div>
-                    }
+                    <div id="waiting"></div>
                     <br /><br />
                     {(formData.compStatus == 'browser') && 
                         <div className="browser">
@@ -325,20 +321,25 @@ const _Collections = ( params: any ): React.JSX.Element => {
                                     }
                                     <tr>
                                         <th className={Styles.thButtons}></th>
-                                        <th id="thname" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('resource_community.name',formData.order) }}></var>
+                                        <th id="thresource_community.name" onClick={thClick} className={Styles.th}>
+                                            <var onClick={() => ctrl.reOrder('resource_community.name')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('resource_community.name',formData.order) }}></var>
                                             { t('community') }</th>
                                         <th id="thname" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('name',formData.order) }}></var>
+                                            <var onClick={() => ctrl.reOrder('name')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('name',formData.order) }}></var>
                                             { t('name') }</th>
                                         <th id="thdescription" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('description',formData.order) }}></var>
+                                            <var onClick={() => ctrl.reOrder('description')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('description',formData.order) }}></var>
                                             { t('description') }</th>
                                         <th id="thstatus" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('status',formData.order) }}></var>
+                                            <var onClick={() => ctrl.reOrder('status')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('status',formData.order) }}></var>
                                             { t('status') }</th>
                                         <th id="thcreated_at" onClick={thClick} className={Styles.th}>
-                                            <var dangerouslySetInnerHTML={{ __html: thIcon('created_at',formData.order) }}></var>
+                                            <var onClick={() => ctrl.reOrder('created_at')}
+                                                 dangerouslySetInnerHTML={{ __html: thIcon('created_at',formData.order) }}></var>
                                             { t('created_at') }</th>
                                     </tr>    
                                 </thead>

@@ -69,6 +69,20 @@ export class Controller {
         this.model = new Model();   // always to be rewritten!
     }
 
+    waiting(show:boolean) {
+        const w = document.getElementById('waiting');
+        if (w != undefined) {
+            if (show) {
+                w.innerHTML = 
+                '<div style="position:fixed; top:300px;width:100%; z-index:10; color:red; text-align:cnter; opacity:1">'+
+                '<img src="/img/waiting_lg.gif" />'+
+                '<div>';
+            } else {
+                w.innerHTML = '';
+            }
+        }
+    }
+
     /**
     * always to be rewritten 
     */ 
@@ -108,7 +122,7 @@ export class Controller {
     getItems(newStatus: string, newOffset?:number) {
         let formData: FormData = this.getFormData();
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         if (newOffset != undefined) {
             if (newOffset < 0) newOffset = 0;
             if (newOffset >= formData.total) newOffset = 0;
@@ -140,6 +154,7 @@ export class Controller {
         this.model.getTotal(this.browserInfo)
         .then( (res) => { 
             res = preprocessor(res);
+            this.waiting(false);
             if (res.error != undefined) {
                 fm.setErrorMsg(res.error);
             } else {
@@ -168,10 +183,11 @@ export class Controller {
      */
     getOneRecord = (id: string, newStatus: string) => {
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         this.model.getRecord(id)
         .then( (res) => { 
             res = preprocessor(res);
+            this.waiting(false);
             if (res.error != undefined) {
                 fm.setErrorMsg(res.error);
             } else {
@@ -198,7 +214,6 @@ export class Controller {
      */
     show(id: string) {
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
         fm.saveBrowserInfo(this.browserInfo);
         this.getOneRecord(id, 'show');
     }  
@@ -234,9 +249,10 @@ export class Controller {
      */
     doDelete = (id: string) => {
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         this.model.delete(id)
         .then( (res) => {
+            this.waiting(false);
             res = preprocessor(res);
             if (res.error != undefined) {
                 fm.setErrorMsg(res.error);
@@ -385,10 +401,11 @@ export class Controller {
     save = () => {
         let formData: FormData = this.getFormData();
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         const errorMsg = this.validator();
         let record: {};
         if (errorMsg != '') {
+            this.waiting(false);
             this.setFormDataField('compStatus','edit');
             fm.setErrorMsg(errorMsg);
         } else {
@@ -416,6 +433,7 @@ export class Controller {
             }   
             this.model.save(record)
             .then((res) => {
+                this.waiting(false);
                 res = preprocessor(res);
                 if (res.error != undefined) {
                     fm.setErrorMsg(res.error);

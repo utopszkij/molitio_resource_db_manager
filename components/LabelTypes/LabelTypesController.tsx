@@ -88,10 +88,11 @@ export class LabelTypeController extends Controller {
      */
     getOneRecord = (id: string, newStatus: string) => {
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         this.model.getRecord(id)
         .then( (res) => { 
             res = preprocessor(res);
+            this.waiting(false);
             if (res.error != undefined) {
                 fm.setErrorMsg(res.error);
             } else {
@@ -194,13 +195,13 @@ export class LabelTypeController extends Controller {
     save = () => {
         window?.scrollTo(0,0);
         let formData = this.getFormData();
-        this.setFormDataField('compStatus','loader');
         const errorMsg = this.validator();
         let record: {};
         if (errorMsg != '') {
             this.setFormDataField('compStatus','edit');
             fm.setErrorMsg(errorMsg);
         } else {
+            this.waiting(true);
             if (formData.id == '') {
                 record = {
                     type_name : formData.type_name,
@@ -221,6 +222,7 @@ export class LabelTypeController extends Controller {
             }    
             this.model.save(record)
             .then((res) => {
+                this.waiting(false);
                 res = preprocessor(res);
                 if (res.error != undefined) {
                     fm.setErrorMsg(res.error);

@@ -90,9 +90,10 @@ export class CommunityController extends Controller {
      */
     getOneRecord = (id: string, newStatus: string) => {
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         this.model.getRecord(id)
         .then( (res) => { 
+            this.waiting(false);
             res = preprocessor(res);
             if (res.error != undefined) {
                 fm.setErrorMsg(res.error);
@@ -219,10 +220,11 @@ export class CommunityController extends Controller {
     save = () => {
         window?.scrollTo(0,0);
         let formData = this.getFormData();
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         const errorMsg = this.validator();
         let record: {};
         if (errorMsg != '') {
+            this.waiting(false);
             this.setFormDataField('compStatus','edit');
             fm.setErrorMsg(errorMsg);
         } else {
@@ -248,6 +250,7 @@ export class CommunityController extends Controller {
             }    
             this.model.save(record)
             .then((res) => {
+                this.waiting(false);
                 res = preprocessor(res);
                 if (res.error != undefined) {
                     fm.setErrorMsg(res.error);

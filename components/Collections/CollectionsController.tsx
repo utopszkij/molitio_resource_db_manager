@@ -104,9 +104,10 @@ export class CollectionController extends Controller {
      */
     getOneRecord = (id: string, newStatus: string) => {
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
+        this.waiting(true);
         this.model.getRecord(id)
         .then( (res) => { 
+            this.waiting(false);
             res = preprocessor(res);
             if (res.error != undefined) {
                 fm.setErrorMsg(res.error);
@@ -256,7 +257,6 @@ export class CollectionController extends Controller {
      */
     save = () => {
         window?.scrollTo(0,0);
-        this.setFormDataField('compStatus','loader');
         const errorMsg = this.validator();
         let formData: FormData = this.getFormData();
         //let record = this.model.initRecord();
@@ -264,6 +264,7 @@ export class CollectionController extends Controller {
             this.setFormDataField('compStatus','edit');
             fm.setErrorMsg(errorMsg);
         } else {
+            this.waiting(true);
             let record = {};
             if (formData.id == '') {
                 record = {
@@ -288,6 +289,7 @@ export class CollectionController extends Controller {
             }    
             this.model.save(record)
             .then((res) => {
+                this.waiting(false);
                 res = preprocessor(res);
                 if (res.error != undefined) {
                     fm.setErrorMsg(res.error);
