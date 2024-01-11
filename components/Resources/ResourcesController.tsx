@@ -1,7 +1,8 @@
 'use client';
 import { t } from '../Translator';    
-import { getRecord, preprocessor} from '../../objects/DatabaseInterface';
+import { preprocessor} from '../../objects/DatabaseInterface';
 import { ResourceModel, Record } from './ResourcesModel';
+import { CollectionModel } from '../Collections/CollectionsModel';
 import { Controller } from '../../objects/Controller';
 import { fm } from '../../objects/FormManager';
 
@@ -70,10 +71,11 @@ export class ResourceController extends Controller {
             this.getItems('browser');
         } else {
             // check this.id is collection? 
-            getRecord(this.model.schema,'resource_collection',['name'],this.id)
+            let collectionModel = new CollectionModel();
+            collectionModel.getRecord(this.id)
             .then( (res) => {
                 res = preprocessor(res);
-                if (res.error == undefined) {
+                if ((res.error == undefined) && (res.length > 0)) {
                     // yes, this.id is collection --> browser by filter
                     this.setFormDataField('collectionName',res[0].name);
                     this.setFormDataField('filterCollectionName',res[0].name);
@@ -151,7 +153,8 @@ export class ResourceController extends Controller {
         this.setFormDataField('creatorName',this.user.nick);
         this.setFormDataField('collection_id',this.id);
         // get Collection
-        getRecord(this.model.schema,'resource_collection',['name'],this.id)
+        let collectionModel = new CollectionModel();
+        collectionModel.getRecord(this.id)
         .then( (res) => {
             res = preprocessor(res);
             this.setFormDataField('collectionName',res[0].name);

@@ -1,7 +1,8 @@
 'use client';
 import { t } from '../Translator';    
-import { getRecord, preprocessor} from '../../objects/DatabaseInterface';
-import { CollectionModel, Record } from './CollectionsModel';
+import { preprocessor} from '../../objects/DatabaseInterface';
+import { CollectionModel, Record  } from './CollectionsModel';
+import { CommunityModel } from '../Communities/CommunitiesModel';
 import { Controller } from '../../objects/Controller';
 import { fm } from '../../objects/FormManager';
 
@@ -60,10 +61,14 @@ export class CollectionController extends Controller {
 
     onLoad(id: string, setFormDataField:SetFormDataField, getFormData: GetFormData) {
         this.id = id;
+
+console.log('communityModel.getRecord jon', this.id);
+
         this.setFormDataField = setFormDataField;
         this.getFormData = getFormData;
         let i = 0;
         let filterField = '';
+        let communityModel = new CommunityModel();
         if (this.id == '0') {
             this.browserInfo.filter = [];
             this.setFormDataField('filterCommunityName','');
@@ -71,10 +76,15 @@ export class CollectionController extends Controller {
             this.getItems('browser');
         } else {
             // this.id is community? 
-            getRecord(this.model.schema,'resource_community',['name'],this.id)
+            communityModel.getRecord(this.id)
             .then( (res) => {
+
+
+console.log(res);
+
+
                 res = preprocessor(res);
-                if (res.error == undefined) {
+                if ((res.error == undefined) && (res.lenght > 0)) {
                     // yes this.id is community --> browser by filter
                     this.setFormDataField('communityName',res[0].name);
                     this.setFormDataField('filterCommunityName',res[0].name);
@@ -92,7 +102,7 @@ export class CollectionController extends Controller {
                 } else {
                     // no this.id not community --> show this.id collection
                     this.show(this.id);
-                }
+                }    
             })
         }
     }
@@ -152,7 +162,8 @@ export class CollectionController extends Controller {
         this.setFormDataField('creatorName',this.user.nick);
         this.setFormDataField('community_id',this.id);
         // get community
-        getRecord(this.model.schema,'resource_community',['name'],this.id)
+        let communityModel = new CommunityModel();
+        communityModel.getRecord(this.id)
         .then( (res) => {
             res = preprocessor(res);
             this.setFormDataField('communityName',res[0].name);

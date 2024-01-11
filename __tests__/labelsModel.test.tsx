@@ -90,7 +90,7 @@ describe("LabelModel test", () => {
     });
     test('LabelModel delete test', () => {
         setFetchResults([
-            {data:[{ affected_rows: 1}]} // delete record
+        {data:[{ affected_rows: 1}]} // delete record
         ]);
         model.delete('123')
         .then( (res) => {

@@ -42,7 +42,7 @@ export class CollectionModel extends Model {
         }
     }
     
-    /**
+   /**
      * read one record from database
      * @param id 
      * @returns JSON promise 

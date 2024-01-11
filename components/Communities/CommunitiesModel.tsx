@@ -48,6 +48,10 @@ export class CommunityModel extends Model {
      *                           [record]
      */
     async getRecord(id: string) {
+
+
+console.log('communityModel.getRecord',id, this.schema, this.table);
+
         return getRecord(this.schema, this.table,
             ['id','name','description','status','created_at','created_by',
               'updated_at','updated_by',  
